@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Dependency injection</title>
+<meta name="author" content="Nikita Aleshchenko"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="styles/tinkoff.css" id="theme"/>
+
+<link rel="stylesheet" href="styles/extra.css"/>
+<link rel="stylesheet" href="styles/monokai.css"/>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide" data-background="rgb(255, 221, 45)" data-state="title-slide">
+<img src="images/logo.svg" id="title-img">
+<h2 class="title">Dependency injection</h2>
+<h3 class="subtitle">in functional programming<h3>
+<h6 class="author">Nikita Aleshchenko</h6>
+</section>
+
+
+<section>
+<section id="slide-orgcf9e81f">
+<h2 id="orgcf9e81f">Слайд обо мне</h2>
+
+</section>
+</section>
+<section>
+<section id="slide-org9cb6139">
+<h2 id="org9cb6139">As software engeneers we want&#x2026;</h2>
+
+</section>
+</section>
+<section>
+<section id="slide-org5f9f41d">
+<h2 id="org5f9f41d">Dependency injection</h2>
+<div class="outline-text-2" id="text-org5f9f41d">
+</div>
+</section>
+<section id="slide-org67bc9de">
+<h3 id="org67bc9de">Dependecy injection</h3>
+<p>
+Dependency Injection is a software design technique in which the creation and binding of dependencies are done outside of the dependent class.
+</p>
+
+</section>
+<section id="slide-org99699ab">
+<h3 id="org99699ab">Benefits of DI</h3>
+<ul>
+<li>Testability</li>
+<li>Separation of concerns</li>
+
+</ul>
+
+</section>
+<section id="slide-org061fc27">
+<h3 id="org061fc27">Onion architecture</h3>
+<span class="first-circle"></span>
+<span class="second-circle"></span>
+<span class="third-circle"></span>
+</section>
+<section id="slide-orgae6ccce">
+<h3 id="orgae6ccce">Three layers cake</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">Layer №</th>
+<th scope="col" class="org-left">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">3</td>
+<td class="org-left">Business logic</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-left">DSL for Business logic</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">Interpreter</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+</section>
+<section>
+<section id="slide-org348cc3a">
+<h2 id="org348cc3a">Sample project</h2>
+<div class="outline-text-2" id="text-org348cc3a">
+</div>
+</section>
+<section id="slide-org3c15a23">
+<h3 id="org3c15a23">Translator bot</h3>
+<p>
+Получает сообщение от пользователя через long polling, переводит с английского на русский, отправляет сообщение обратно пользователю.
+</p>
+
+<ul>
+<li>Получение новых сообщений;</li>
+<li>Отправка сообщений;</li>
+<li>Перевод текста;</li>
+
+</ul>
+</section>
+<section id="slide-org51e199e">
+<h3 id="org51e199e">Gist</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data Message = Msg
+  { chatId :: Integer
+  , text :: Text
+  }
+
+pullUpdates :: IO [Message]
+pullUpdates = ...
+
+sendMessage :: IO ()
+sendMessage = ...
+
+translate :: Text -&gt; IO (Maybe Text)
+translate = ...
+
+proceed :: IO ()
+proceed = pullUpdates
+  &gt;&gt;= traverse_ (translateMsg &gt;&gt;= sendMessage)
+  where
+    translateMsg :: Message -&gt; IO Message
+    translateMsg (Msg ci t) = translate t
+      &lt;&amp;&gt; (maybe
+             (Msg ci "Cannot translate text")
+             (Msg ci))
+
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org4ee809b">
+<h3 id="org4ee809b">Problems</h3>
+<ul>
+<li>Весь код в IO;</li>
+<li>Не тестируемый код;</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org7156b36">
+<h2 id="org7156b36">Handle / Service pattern</h2>
+<div class="outline-text-2" id="text-org7156b36">
+</div>
+</section>
+<section id="slide-org6dea18f">
+<h3 id="org6dea18f">Functional programming</h3>
+<ul>
+<li>Functions</li>
+<li>Data</li>
+
+</ul>
+</section>
+<section id="slide-orgb07c65f">
+<h3 id="orgb07c65f">Key idea</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data Handle = Handle
+    { hPool   :: Pool Postgres.Connection
+    , hCache  :: IORef (PSQueue Int Text User)
+    , hLogger :: Logger.Handle  -- Another handle!
+    , ...
+    }
+</code></pre>
+</div>
+</section>
+<section id="slide-org516b22c">
+<h3 id="org516b22c">Handle interface</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data Handle = Handle
+    { createUser :: Text -&gt; IO User
+    , ...
+    }
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre><code class="haskell" >createUser :: Handle -&gt; Text -&gt; IO User
+createUser = ...
+</code></pre>
+</div>
+
+</section>
+<section id="slide-orgd0482b1">
+<h3 id="orgd0482b1">Our project</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data Message = Msg
+  { chatId :: Integer
+  , text :: Text
+  }
+
+pullUpdates :: IO [Message]
+pullUpdates = ...
+
+sendMessage :: IO ()
+sendMessage = ...
+
+translate :: Text -&gt; IO (Maybe Text)
+translate = ...
+
+proceed :: IO ()
+proceed = pullUpdates
+  &gt;&gt;= traverse_ (translateMsg &gt;&gt;= sendMessage)
+  where
+    translateMsg :: Message -&gt; IO Message
+    translateMsg (Msg ci t) = translate t
+      &lt;&amp;&gt; (maybe
+             (Msg ci "Cannot translate text")
+             (Msg ci))
+
+</code></pre>
+</div>
+
+</section>
+<section id="slide-orgd3f7ee4">
+<h3 id="orgd3f7ee4">Our project</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data Handle = Handle
+  { pullUpdates :: IO [Message]
+  , sendMessage :: IO ()
+  , translate :: Text -&gt; IO (Maybe Text)
+  }
+
+proceed :: Handle -&gt; IO ()
+proceed h = pullUpdates h
+  &gt;&gt;= traverse_ (translateMsg &gt;&gt;= sendMessage h)
+  where
+    translateMsg :: Message -&gt; m Message
+    translateMsg (Msg ci t) = translate h t
+      &lt;&amp;&gt; (maybe
+             (Msg ci "Cannot translate text")
+             (Msg ci))
+
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org2965143">
+<h3 id="org2965143">Parametrize monad</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data Handle m = Handle
+    { createUser :: Text -&gt; m User
+    , getUserMail :: User -&gt; m [Mail]
+    , ...
+    }
+</code></pre>
+</div>
+
+
+</section>
+<section id="slide-org3717473">
+<h3 id="org3717473">Our project</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data Handle m = Handle
+  { pullUpdates :: m [Message]
+  , sendMessage :: m ()
+  , translate :: Text -&gt; m (Maybe Text)
+  }
+
+proceed :: MonadIO m =&gt; Handle m -&gt; m ()
+proceed h = pullUpdates h
+  &gt;&gt;= traverse_ (translateMsg &gt;&gt;= sendMessage h)
+  where
+    translateMsg :: Message -&gt; m Message
+    translateMsg (Msg ci t) = translate h t
+      &lt;&amp;&gt; (maybe
+             (Msg ci "Cannot translate text")
+             (Msg ci))
+
+</code></pre>
+</div>
+
+</section>
+<section id="slide-orgcf62b27">
+<h3 id="orgcf62b27">Pros &amp; cons</h3>
+<ul>
+<li>Pros:
+<ul>
+<li>Simple &amp; intuitive</li>
+<li>Performant</li>
+<li>Local substituation of a handlers</li>
+
+</ul></li>
+
+<li>Cons:
+<ul>
+<li>Manual passing of handlers</li>
+<li>Tightly bound to execution monad</li>
+
+</ul></li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org6b76e47">
+<h2 id="org6b76e47">Tagless final</h2>
+<div class="outline-text-2" id="text-org6b76e47">
+</div>
+</section>
+<section id="slide-org40d6cea">
+<h3 id="org40d6cea">Key idea</h3>
+<p>
+From <b>Handle</b> data structure to <b>Type classes</b>!
+</p>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data Handle m = Handle
+  { pullUpdates :: m [Message]
+  , sendMessage :: m ()
+  , translate :: Text -&gt; m (Maybe Text)
+  }
+</code></pre>
+</div>
+
+<div id="org8bb731f" class="figure">
+<p><img src="./images/ArrowDown.png" alt="ArrowDown.png" width="5%" style="margin: -15px;" />
+</p>
+</div>
+<div class="org-src-container">
+
+<pre><code class="haskell" >class Monad m =&gt; MonadMessenger m where
+  pullUpdates :: m [Message]
+  sendMessage :: m ()
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre><code class="haskell" >class Monad m =&gt; MonadTranslator m where
+  translate :: Text -&gt; m (Maybe Text)
+</code></pre>
+</div>
+</section>
+<section id="slide-org451440e">
+<h3 id="org451440e">Type families</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >class Monad m =&gt; MonadMessenger m where
+  type Message m :: *
+  pullUpdates :: m [Message]
+  sendMessage :: m ()
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre><code class="haskell" >class Monad m =&gt; MonadTranslator m where
+  translate :: Text -&gt; m (Maybe Text)
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org5f8004e">
+<h3 id="org5f8004e">Our project</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >class Monad m =&gt; MonadMessenger m where
+  pullUpdates :: m [Message]
+  sendMessage :: m ()
+
+class Monad m =&gt; MonadTranslator m where
+  translate :: Text -&gt; m (Maybe Text)
+
+proceed :: (MonadMessenger m, MonadTranslator m) =&gt; m ()
+proceed h = pullUpdates
+  &gt;&gt;= traverse_ (translateMsg &gt;&gt;= sendMessage)
+  where
+    translateMsg :: (MonadTranslator m) =&gt; Message -&gt; m Message
+    translateMsg (Msg ci t) = translate t
+      &lt;&amp;&gt; (maybe
+             (Msg ci "Cannot translate text")
+             (Msg ci))
+
+</code></pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org343aaba">
+<h2 id="org343aaba">Free monads</h2>
+<div class="outline-text-2" id="text-org343aaba">
+</div>
+</section>
+<section id="slide-org1a96d1f">
+<h3 id="org1a96d1f">Big Three</h3>
+<p>
+<b>Functor</b>
+</p>
+<div class="org-src-container">
+
+<pre><code class="haskell" >class Functor f where
+  fmap :: (a -&gt; b) -&gt; f a -&gt; f b
+</code></pre>
+</div>
+
+<p>
+<b>Applicative</b>
+</p>
+<div class="org-src-container">
+
+<pre><code class="haskell" >class Functor f =&gt; Applicative f where
+  pure :: a -&gt; f a
+  (&lt;*&gt;) :: f (a -&gt; b) -&gt; f a -&gt; f b
+</code></pre>
+</div>
+
+<p>
+<b>Monad</b>
+</p>
+<div class="org-src-container">
+
+<pre><code class="haskell" >class Applicative m =&gt; Monad m where
+  return :: a -&gt; m a
+  (&gt;&gt;=) :: m a -&gt; (a -&gt; m b) -&gt; m b
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org9b31fbb">
+<h3 id="org9b31fbb">Monad</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >class Applicative m =&gt; Monad m where
+  return :: a -&gt; m a
+  (&gt;&gt;=) :: m a -&gt; (a -&gt; m b) -&gt; m b
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre><code class="haskell" >join :: (Monad m) =&gt; m (m a) -&gt; m a
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org7ad699f">
+<h3 id="org7ad699f">Monad</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >join :: (Monad m) =&gt; m (m a) -&gt; m a
+fmap :: (a -&gt; b) -&gt; f a -&gt; f b
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre><code class="haskell" >(&gt;&gt;=) :: m a -&gt; (a -&gt; m b) -&gt; m b
+(&gt;&gt;=) m f = join (fmap f m)
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org4eb715e">
+<h3 id="org4eb715e">Key Idea</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data Free f a
+  = Pure a
+  | Free (f (Free f a))
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org7d08623">
+<h3 id="org7d08623">Key Idea</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data Free f a
+  = Pure a
+  | Free (f (Free f a))
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre><code class="haskell" >Pure :: a -&gt; m a        -- looks like pure
+Free :: f (m a) -&gt; m a  -- looks like join
+</code></pre>
+</div>
+
+</section>
+<section id="slide-orgcf2ffda">
+<h3 id="orgcf2ffda">Functor instance</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data Free f a
+  = Pure a
+  | Free (f (Free f a))
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre><code class="haskell" >instance Functor f =&gt; Functor (Free f) where
+  fmap g (Free fx) = Free (fmap g &lt;$&gt; fx)
+  fmap g (Pure x)  = Pure (g x)
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org3b4cfb8">
+<h3 id="org3b4cfb8">Monad instance</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data Free f a
+  = Pure a
+  | Free (f (Free f a))
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre><code class="haskell" >instance Functor f =&gt; Monad (Free f) where
+  return = Pure
+  Pure x  &gt;&gt;= g  =  g x
+  Free fx &gt;&gt;= g  =  Free ((&gt;&gt;= g) &lt;$&gt; fx)
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org21298c2">
+<h3 id="org21298c2">Business logic functor</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data BotF
+  = PullUpdates [Message]
+  | SendMessage Message
+  | Translate Text (Maybe Text)
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org1e02e80">
+<h3 id="org1e02e80">Business logic functor</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data BotF a
+  = PullUpdates [Message] a
+  | SendMessage Message a
+  | Translate Text (Maybe Text) a
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org1a38233">
+<h3 id="org1a38233">Business logic functor</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data BotF a
+  = PullUpdates ([Message] -&gt; a)
+  | SendMessage Message a
+  | Translate Text ((Maybe Text) -&gt; a)
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org25ac37c">
+<h3 id="org25ac37c">Business logic functor</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data BotF a
+  = PullUpdates ([Message] -&gt; a)
+  | SendMessage Message a
+  | Translate Text ((Maybe Text) -&gt; a)
+  deriving (Functor)
+
+type Bot = Free BotF
+</code></pre>
+</div>
+
+</section>
+<section id="slide-orgcc1d0be">
+<h3 id="orgcc1d0be">Lift functor</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >liftF :: Functor f =&gt; f a -&gt; Free f a
+liftF command = Free (fmap Pure command)
+</code></pre>
+</div>
+
+
+</section>
+<section id="slide-org13e76c2">
+<h3 id="org13e76c2">Helper functions</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data BotF a
+  = PullUpdates ([Message] -&gt; a)
+  | SendMessage Message a
+  | Translate Text ((Maybe Text) -&gt; a)
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre><code class="haskell" >pullUpdates :: Bot [Message]
+pullUpdates = liftF (PullUpdates id)
+
+sendMessage :: Message -&gt; Bot ()
+sendMessage msg = liftF (SendMessage msg ())
+
+translate :: Text -&gt; Bot (Maybe Text)
+translate t = liftF (Translate t id)
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org7b87751">
+<h3 id="org7b87751">Business logic</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >proceed :: Bot ()
+proceed h = pullUpdates
+  &gt;&gt;= traverse_ (translateMsg &gt;&gt;= sendMessage)
+  where
+    translateMsg :: Message -&gt; Bot Message
+    translateMsg (Msg ci t) = translate t
+      &lt;&amp;&gt; (maybe
+             (Msg ci "Cannot translate text")
+             (Msg ci))
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org839e8f1">
+<h3 id="org839e8f1">Interpreter</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >botIO :: BotF a -&gt; IO a
+botIO (PullUpdates u) = ...
+botIO (SendMessage m a) = ...
+botIO (Translate t ft) = ...
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org7260dd5">
+<h3 id="org7260dd5">Interpreter helpers</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >freeM :: (Functor f, Functor g)
+      =&gt; (f a -&gt; g a) -&gt; Free f a -&gt; Free g a
+freeM phi (Pure x) = Pure x
+freeM phi (Free fx) = Free $ phi (freeM phi &lt;$&gt; fx)
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre><code class="haskell" >monad :: Monad m =&gt; Free m a -&gt; m a
+monad (Pure x) = pure x
+monad (Free mfx) = do
+  fx &lt;- mfx
+  monad fx
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre><code class="haskell" >interp :: (Functor f, Monad m)
+       =&gt; (f a -&gt; m a) -&gt; Free f a -&gt; m a
+interp phi = monad . freeM phi
+</code></pre>
+</div>
+
+</section>
+<section id="slide-orgcd306d1">
+<h3 id="orgcd306d1">Interpreter</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >botIO :: BotF a -&gt; IO a
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre><code class="haskell" >interp :: (Functor f, Monad m)
+       =&gt; (f a -&gt; m a) -&gt; Free f a -&gt; m a
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre><code class="haskell" >interpBotIO :: Bot a -&gt; IO a
+interpBotIO = interp botIO
+</code></pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org9ab0030">
+<h2 id="org9ab0030">Freer monads</h2>
+<div class="outline-text-2" id="text-org9ab0030">
+</div>
+</section>
+<section id="slide-orga115e84">
+<h3 id="orga115e84">Free monad</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data Free f a
+  = Pure a
+  | Free (f (Free f a))
+</code></pre>
+</div>
+
+<div id="org6d4617d" class="figure">
+<p><img src="./images/ArrowDown.png" alt="ArrowDown.png" width="5%" style="margin: -15px;" />
+</p>
+</div>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data Free f a where
+  Pure   :: a -&gt; Free f a
+  Impure :: f (Free f a) -&gt; Free f a
+</code></pre>
+</div>
+</section>
+<section id="slide-org6da4081">
+<h3 id="org6da4081">Simple trick</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data Lan g a where
+  Lan :: g x -&gt; (x -&gt; a) -&gt; Lan g a
+
+instance Functor (Lan g) where
+  fmap f (Lan gx h) = Lan gx (f . h)
+
+lan :: g a -&gt; Lan g a
+lan ga = Lan ga id
+</code></pre>
+</div>
+</section>
+<section id="slide-orgd591519">
+<h3 id="orgd591519">Substitution</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data Free f a where
+  Pure   :: a -&gt; Free f a
+  Impure :: f (Free f a) -&gt; Free f a
+</code></pre>
+</div>
+
+
+<div id="orge8c966d" class="figure">
+<p><img src="./images/ArrowDown.png" alt="ArrowDown.png" width="5%" style="margin: -15px;" />
+</p>
+</div>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data Free (Lan g a) a where
+  Pure   :: a -&gt; Free (Lan g a) a
+  Impure :: (Lan (Free (Lan g a) a) a) -&gt; Free (Lan g a) a
+</code></pre>
+</div>
+
+
+<div id="org6fdd582" class="figure">
+<p><img src="./images/ArrowDown.png" alt="ArrowDown.png" width="5%" style="margin: -15px;" />
+</p>
+</div>
+<div class="org-src-container">
+
+<pre><code class="haskell" >data FFree g a where
+  FPure   :: a -&gt; FFree g a
+  FImpure :: g x -&gt; (x -&gt; FFree g a) -&gt; FFree g a
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgaf785fb">
+<h2 id="orgaf785fb">Effects systems</h2>
+</section>
+</section>
+<section>
+<section id="slide-org92f2011">
+<h2 id="org92f2011">Questions?</h2>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'convex',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealHighlight ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>

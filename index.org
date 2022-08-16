@@ -1,0 +1,519 @@
+#+TITLE: Dependency injection
+#+SUBTITLE: in functional programming
+#+AUTHOR: Nikita Aleshchenko
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+#+REVEAL_THEME: styles/tinkoff.css
+#+REVEAL_PLUGINS: (highlight)
+#+REVEAL_HIGHLIGHT_CSS: styles/monokai.css
+#+REVEAL_EXTRA_CSS: styles/extra.css
+#+OPTIONS: num:nil toc:nil
+
+#+REVEAL_TITLE_SLIDE: <img src="images/logo.svg" id="title-img">
+#+REVEAL_TITLE_SLIDE: <h2 class="title">%t</h2>
+#+REVEAL_TITLE_SLIDE: <h3 class="subtitle">%s<h3>
+#+REVEAL_TITLE_SLIDE: <h6 class="author">%a</h6>
+#+REVEAL_TITLE_SLIDE_BACKGROUND: rgb(255, 221, 45)
+#+REVEAL_TITLE_SLIDE_STATE: title-slide
+
+
+* Слайд обо мне
+# * Agenda
+# + Dependency injection
+# + Sample project
+# + Handle / Service pattern
+# + Tagless final
+# + Free monads
+# + Freer monads
+# + Effects systems
+# + Comparison
+
+* As software engeneers we want...
+
+* Dependency injection
+** Dependecy injection
+Dependency Injection is a software design technique in which the creation and binding of dependencies are done outside of the dependent class.
+
+** Benefits of DI
++ Testability
++ Separation of concerns
+
+** Onion architecture
+# #+ATTR_HTML: :width 30%
+# [[./images/onion.png]]
+#+REVEAL_HTML: <span class="first-circle"></span>
+#+REVEAL_HTML: <span class="second-circle"></span>
+#+REVEAL_HTML: <span class="third-circle"></span>
+** Three layers cake
+| Layer № | Purpose                |
+|---------+------------------------|
+|       3 | Business logic         |
+|       2 | DSL for Business logic |
+|       1 | Interpreter            |
+
+* Sample project
+** Translator bot
+Получает сообщение от пользователя через long polling, переводит с английского на русский, отправляет сообщение обратно пользователю.
+
++ Получение новых сообщений;
++ Отправка сообщений;
++ Перевод текста;
+** Gist
+#+BEGIN_SRC haskell
+data Message = Msg
+  { chatId :: Integer
+  , text :: Text
+  }
+
+pullUpdates :: IO [Message]
+pullUpdates = ...
+
+sendMessage :: IO ()
+sendMessage = ...
+
+translate :: Text -> IO (Maybe Text)
+translate = ...
+
+proceed :: IO ()
+proceed = pullUpdates
+  >>= traverse_ (translateMsg >>= sendMessage)
+  where
+    translateMsg :: Message -> IO Message
+    translateMsg (Msg ci t) = translate t
+      <&> (maybe
+             (Msg ci "Cannot translate text")
+             (Msg ci))
+
+#+END_SRC
+
+** Problems
++ Весь код в IO;
++ Не тестируемый код;
+
+* Handle / Service pattern
+** Functional programming
++ Functions
++ Data
+** Key idea
+#+BEGIN_SRC haskell
+data Handle = Handle
+    { hPool   :: Pool Postgres.Connection
+    , hCache  :: IORef (PSQueue Int Text User)
+    , hLogger :: Logger.Handle  -- Another handle!
+    , ...
+    }
+#+END_SRC
+** Handle interface
+#+BEGIN_SRC haskell
+data Handle = Handle
+    { createUser :: Text -> IO User
+    , ...
+    }
+#+END_SRC
+
+#+BEGIN_SRC haskell
+createUser :: Handle -> Text -> IO User
+createUser = ...
+#+END_SRC
+
+** Our project
+#+BEGIN_SRC haskell
+data Message = Msg
+  { chatId :: Integer
+  , text :: Text
+  }
+
+pullUpdates :: IO [Message]
+pullUpdates = ...
+
+sendMessage :: IO ()
+sendMessage = ...
+
+translate :: Text -> IO (Maybe Text)
+translate = ...
+
+proceed :: IO ()
+proceed = pullUpdates
+  >>= traverse_ (translateMsg >>= sendMessage)
+  where
+    translateMsg :: Message -> IO Message
+    translateMsg (Msg ci t) = translate t
+      <&> (maybe
+             (Msg ci "Cannot translate text")
+             (Msg ci))
+
+#+END_SRC
+
+** Our project
+#+BEGIN_SRC haskell
+data Handle = Handle
+  { pullUpdates :: IO [Message]
+  , sendMessage :: IO ()
+  , translate :: Text -> IO (Maybe Text)
+  }
+
+proceed :: Handle -> IO ()
+proceed h = pullUpdates h
+  >>= traverse_ (translateMsg >>= sendMessage h)
+  where
+    translateMsg :: Message -> m Message
+    translateMsg (Msg ci t) = translate h t
+      <&> (maybe
+             (Msg ci "Cannot translate text")
+             (Msg ci))
+
+#+END_SRC
+
+** Parametrize monad
+#+BEGIN_SRC haskell
+data Handle m = Handle
+    { createUser :: Text -> m User
+    , getUserMail :: User -> m [Mail]
+    , ...
+    }
+#+END_SRC
+
+
+** Our project
+#+BEGIN_SRC haskell
+data Handle m = Handle
+  { pullUpdates :: m [Message]
+  , sendMessage :: m ()
+  , translate :: Text -> m (Maybe Text)
+  }
+
+proceed :: MonadIO m => Handle m -> m ()
+proceed h = pullUpdates h
+  >>= traverse_ (translateMsg >>= sendMessage h)
+  where
+    translateMsg :: Message -> m Message
+    translateMsg (Msg ci t) = translate h t
+      <&> (maybe
+             (Msg ci "Cannot translate text")
+             (Msg ci))
+
+#+END_SRC
+
+** Pros & cons
++ Pros:
+  + Simple & intuitive
+  + Performant
+  + Local substituation of a handlers
+
++ Cons:
+  + Manual passing of handlers
+  + Tightly bound to execution monad
+
+* Tagless final
+** Key idea
+From *Handle* data structure to *Type classes*!
+#+BEGIN_SRC haskell
+data Handle m = Handle
+  { pullUpdates :: m [Message]
+  , sendMessage :: m ()
+  , translate :: Text -> m (Maybe Text)
+  }
+#+END_SRC
+#+ATTR_HTML: :width 5% :style margin: -15px;
+[[./images/ArrowDown.png]]
+#+BEGIN_SRC haskell
+class Monad m => MonadMessenger m where
+  pullUpdates :: m [Message]
+  sendMessage :: m ()
+#+END_SRC
+
+#+BEGIN_SRC haskell
+class Monad m => MonadTranslator m where
+  translate :: Text -> m (Maybe Text)
+#+END_SRC
+** Type families
+#+BEGIN_SRC haskell
+class Monad m => MonadMessenger m where
+  type Message m :: *
+  pullUpdates :: m [Message]
+  sendMessage :: m ()
+#+END_SRC
+
+#+BEGIN_SRC haskell
+class Monad m => MonadTranslator m where
+  translate :: Text -> m (Maybe Text)
+#+END_SRC
+
+** Our project
+#+BEGIN_SRC haskell
+class Monad m => MonadMessenger m where
+  pullUpdates :: m [Message]
+  sendMessage :: m ()
+
+class Monad m => MonadTranslator m where
+  translate :: Text -> m (Maybe Text)
+
+proceed :: (MonadMessenger m, MonadTranslator m) => m ()
+proceed h = pullUpdates
+  >>= traverse_ (translateMsg >>= sendMessage)
+  where
+    translateMsg :: (MonadTranslator m) => Message -> m Message
+    translateMsg (Msg ci t) = translate t
+      <&> (maybe
+             (Msg ci "Cannot translate text")
+             (Msg ci))
+
+#+END_SRC
+
+* Free monads
+** Big Three
+*Functor*
+#+BEGIN_SRC haskell
+class Functor f where
+  fmap :: (a -> b) -> f a -> f b
+#+END_SRC
+
+*Applicative*
+#+BEGIN_SRC haskell
+class Functor f => Applicative f where
+  pure :: a -> f a
+  (<*>) :: f (a -> b) -> f a -> f b
+#+END_SRC
+
+*Monad*
+#+BEGIN_SRC haskell
+class Applicative m => Monad m where
+  return :: a -> m a
+  (>>=) :: m a -> (a -> m b) -> m b
+#+END_SRC
+
+** Monad
+#+BEGIN_SRC haskell
+class Applicative m => Monad m where
+  return :: a -> m a
+  (>>=) :: m a -> (a -> m b) -> m b
+#+END_SRC
+
+#+BEGIN_SRC haskell
+join :: (Monad m) => m (m a) -> m a
+#+END_SRC
+
+** Monad
+#+BEGIN_SRC haskell
+join :: (Monad m) => m (m a) -> m a
+fmap :: (a -> b) -> f a -> f b
+#+END_SRC
+
+#+BEGIN_SRC haskell
+(>>=) :: m a -> (a -> m b) -> m b
+(>>=) m f = join (fmap f m)
+#+END_SRC
+
+** Key Idea
+#+BEGIN_SRC haskell
+data Free f a
+  = Pure a
+  | Free (f (Free f a))
+#+END_SRC
+
+** Key Idea
+#+BEGIN_SRC haskell
+data Free f a
+  = Pure a
+  | Free (f (Free f a))
+#+END_SRC
+
+#+BEGIN_SRC haskell
+Pure :: a -> m a        -- looks like pure
+Free :: f (m a) -> m a  -- looks like join
+#+END_SRC
+
+** Functor instance
+#+BEGIN_SRC haskell
+data Free f a
+  = Pure a
+  | Free (f (Free f a))
+#+END_SRC
+
+#+BEGIN_SRC haskell
+instance Functor f => Functor (Free f) where
+  fmap g (Free fx) = Free (fmap g <$> fx)
+  fmap g (Pure x)  = Pure (g x)
+#+END_SRC
+
+** Monad instance
+#+BEGIN_SRC haskell
+data Free f a
+  = Pure a
+  | Free (f (Free f a))
+#+END_SRC
+
+#+BEGIN_SRC haskell
+instance Functor f => Monad (Free f) where
+  return = Pure
+  Pure x  >>= g  =  g x
+  Free fx >>= g  =  Free ((>>= g) <$> fx)
+#+END_SRC
+
+** Business logic functor
+#+BEGIN_SRC haskell
+data BotF
+  = PullUpdates [Message]
+  | SendMessage Message
+  | Translate Text (Maybe Text)
+#+END_SRC
+
+** Business logic functor
+#+BEGIN_SRC haskell
+data BotF a
+  = PullUpdates [Message] a
+  | SendMessage Message a
+  | Translate Text (Maybe Text) a
+#+END_SRC
+
+** Business logic functor
+#+BEGIN_SRC haskell
+data BotF a
+  = PullUpdates ([Message] -> a)
+  | SendMessage Message a
+  | Translate Text ((Maybe Text) -> a)
+#+END_SRC
+
+** Business logic functor
+#+BEGIN_SRC haskell
+data BotF a
+  = PullUpdates ([Message] -> a)
+  | SendMessage Message a
+  | Translate Text ((Maybe Text) -> a)
+  deriving (Functor)
+
+type Bot = Free BotF
+#+END_SRC
+
+** Lift functor
+#+BEGIN_SRC haskell
+liftF :: Functor f => f a -> Free f a
+liftF command = Free (fmap Pure command)
+#+END_SRC
+
+
+** Helper functions
+#+BEGIN_SRC haskell
+data BotF a
+  = PullUpdates ([Message] -> a)
+  | SendMessage Message a
+  | Translate Text ((Maybe Text) -> a)
+#+END_SRC
+
+#+BEGIN_SRC haskell
+pullUpdates :: Bot [Message]
+pullUpdates = liftF (PullUpdates id)
+
+sendMessage :: Message -> Bot ()
+sendMessage msg = liftF (SendMessage msg ())
+
+translate :: Text -> Bot (Maybe Text)
+translate t = liftF (Translate t id)
+#+END_SRC
+
+** Business logic
+#+BEGIN_SRC haskell
+proceed :: Bot ()
+proceed h = pullUpdates
+  >>= traverse_ (translateMsg >>= sendMessage)
+  where
+    translateMsg :: Message -> Bot Message
+    translateMsg (Msg ci t) = translate t
+      <&> (maybe
+             (Msg ci "Cannot translate text")
+             (Msg ci))
+#+END_SRC
+
+** Interpreter
+#+BEGIN_SRC haskell
+botIO :: BotF a -> IO a
+botIO (PullUpdates u) = ...
+botIO (SendMessage m a) = ...
+botIO (Translate t ft) = ...
+#+END_SRC
+
+** Interpreter helpers
+#+BEGIN_SRC haskell
+freeM :: (Functor f, Functor g)
+      => (f a -> g a) -> Free f a -> Free g a
+freeM phi (Pure x) = Pure x
+freeM phi (Free fx) = Free $ phi (freeM phi <$> fx)
+#+END_SRC
+
+#+BEGIN_SRC haskell
+monad :: Monad m => Free m a -> m a
+monad (Pure x) = pure x
+monad (Free mfx) = do
+  fx <- mfx
+  monad fx
+#+END_SRC
+
+#+BEGIN_SRC haskell
+interp :: (Functor f, Monad m)
+       => (f a -> m a) -> Free f a -> m a
+interp phi = monad . freeM phi
+#+END_SRC
+
+** Interpreter
+#+BEGIN_SRC haskell
+botIO :: BotF a -> IO a
+#+END_SRC
+
+#+BEGIN_SRC haskell
+interp :: (Functor f, Monad m)
+       => (f a -> m a) -> Free f a -> m a
+#+END_SRC
+
+#+BEGIN_SRC haskell
+interpBotIO :: Bot a -> IO a
+interpBotIO = interp botIO
+#+END_SRC
+
+* Freer monads
+** Free monad
+#+BEGIN_SRC haskell
+data Free f a
+  = Pure a
+  | Free (f (Free f a))
+#+END_SRC
+#+ATTR_HTML: :width 5% :style margin: -15px;
+[[./images/ArrowDown.png]]
+#+BEGIN_SRC haskell
+data Free f a where
+  Pure   :: a -> Free f a
+  Impure :: f (Free f a) -> Free f a
+#+END_SRC
+** Simple trick
+#+BEGIN_SRC haskell
+data Lan g a where
+  Lan :: g x -> (x -> a) -> Lan g a
+
+instance Functor (Lan g) where
+  fmap f (Lan gx h) = Lan gx (f . h)
+
+lan :: g a -> Lan g a
+lan ga = Lan ga id
+#+END_SRC
+** Substitution
+#+BEGIN_SRC haskell
+data Free f a where
+  Pure   :: a -> Free f a
+  Impure :: f (Free f a) -> Free f a
+#+END_SRC
+
+#+ATTR_HTML: :width 5% :style margin: -15px;
+[[./images/ArrowDown.png]]
+#+BEGIN_SRC haskell
+data Free (Lan g a) a where
+  Pure   :: a -> Free (Lan g a) a
+  Impure :: (Lan (Free (Lan g a) a) a) -> Free (Lan g a) a
+#+END_SRC
+
+#+ATTR_HTML: :width 5% :style margin: -15px;
+[[./images/ArrowDown.png]]
+#+BEGIN_SRC haskell
+data FFree g a where
+  FPure   :: a -> FFree g a
+  FImpure :: g x -> (x -> FFree g a) -> FFree g a
+#+END_SRC
+* Effects systems
+* Questions?

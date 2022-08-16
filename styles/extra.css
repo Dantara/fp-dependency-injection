@@ -1,0 +1,145 @@
+.hljs {
+        background: #000830;
+    }
+
+.hljs-type {
+        color: #76b748
+    }
+
+.hljs-string {
+        color: #EACF47
+    }
+
+.hljs-meta { /*аннотации*/
+        color: #e3dd3e
+    }
+
+.hljs-number {
+        color: #6897BB
+    }
+
+p {
+        margin-block-start: 0;
+    }
+
+/*Code Header*/
+/* .code-header { */
+/*         content: url("codeHeader.svg"); */
+/*         margin-bottom: 0 !important; */
+/*         max-width: 100% !important; */
+/*     } */
+
+.code-header ~ .code-wrapper {
+        width: 100% !important;
+        margin-top: -2%;
+        max-height: 500px !important;
+    }
+
+.reveal pre code {
+        max-height: 500px;
+    }
+
+/*Left title*/
+section[data-state=title-slide] {
+        margin: 0;
+        height: 600px;
+    }
+
+/*Left text*/
+h2 {
+        text-align: left;
+    }
+h3 {
+        text-align: left;
+    }
+
+/*Left markers*/
+ul {
+        margin-left: 0 !important;
+        display: block !important;
+    }
+
+/*Color of controls (arrows)*/
+.reveal .controls {
+        color: #fff;
+    }
+
+
+.block {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        height: 100%;
+    }
+
+#title-img {
+         padding-left: 0;
+         padding-right: 100%;
+         /* position: absolute; */
+         /* top: 0%; */
+         /* left: 0%; */
+         width: 200px;
+    }
+
+.title{
+        margin-top: 15% !important;
+        text-align:left;
+    }
+
+.subtitle {
+        text-align:left;
+    }
+
+.author {
+        margin-top: 16% !important;
+        width: fit-content;
+        position: absolute;
+    }
+
+.first-circle{
+  display: inline-block;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  border-style: solid;
+  border-width: 8px;
+  border-color: white;
+  background-color: rgba(0, 0, 0, 0);
+  transform: translate(-50%, -50%);
+  position: absolute;
+  top: 300%;
+  left: 50%;
+  pointer-events: none;
+}
+
+.second-circle{
+  display: inline-block;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border-style: solid;
+  border-width: 8px;
+  border-color: white;
+  background-color: rgba(0, 0, 0, 0);
+  transform: translate(-50%, -50%);
+  position: absolute;
+  top: 300%;
+  left: 50%;
+  pointer-events: none;
+}
+
+.third-circle{
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border-style: solid;
+  border-width: 8px;
+  border-color: white;
+  background-color: rgba(0, 0, 0, 0);
+  transform: translate(-50%, -50%);
+  position: absolute;
+  top: 300%;
+  left: 50%;
+  pointer-events: none;
+}
