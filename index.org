@@ -7,9 +7,11 @@
 #+REVEAL_PLUGINS: (highlight)
 #+REVEAL_HIGHLIGHT_CSS: styles/monokai.css
 #+REVEAL_EXTRA_CSS: styles/extra.css
+#+REVEAL_EXTRA_CSS: https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css
 #+OPTIONS: num:nil toc:nil reveal_width:1075
 #+REVEAL_TRANS: slide
 #+REVEAL_MARGIN: 0
+# #+REVEAL_EXTERNAL_PLUGINS: (RevealAnimate . "plugins/animate.js")
 
 #+REVEAL_TITLE_SLIDE: <img src="images/logo.svg" id="title-img">
 #+REVEAL_TITLE_SLIDE: <h2 class="title">%t</h2>
@@ -20,39 +22,89 @@
 
 #+INCLUDE: ./about.html export html
 
-* As software engeneers we want...
+* Мы как разработчики хотим писать...
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+* Мы как разработчики хотим писать...
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :frag appear
++ Поддерживаемый код;
+#+ATTR_REVEAL: :frag appear
++ Расширяемый код;
+#+ATTR_REVEAL: :frag appear
++ Переиспользуемый код;
+#+ATTR_REVEAL: :frag appear
++ Тестируемый код;
 
 * Dependency injection
-** Dependecy injection
-Dependency Injection is a software design technique in which the creation and binding of dependencies are done outside of the dependent class.
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+* Dependency injection
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+# Dependency Injection (Внедрение зависимостей) is a software design technique in which the creation and binding of dependencies are done outside of the dependent class.
+Dependency Injection (Внедрение зависимостей) - это метод проектирования программного обеспечения, при котором создание и привязка зависимостей выполняются вне зависимого класса.
 
-** Benefits of DI
-+ Testability
-+ Separation of concerns
+** Преимущества DI
+#+ATTR_REVEAL: :frag appear
++ Separation of concerns (Разделение ответственностей);
+  + Поддерживаемый код;
+  + Расширяемый код;
+  + Переиспользуемый код;
+#+ATTR_REVEAL: :frag appear
++ Тестируемость;
 
-** Onion architecture
+
+* Onion architecture
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
 #+REVEAL_HTML: <span class="first-circle circle"></span>
 #+REVEAL_HTML: <span class="second-circle circle"></span>
 #+REVEAL_HTML: <span class="third-circle circle"></span>
-** Three layers cake
-| Layer № | Purpose                |
-|---------+------------------------|
-|       3 | Business logic         |
-|       2 | DSL for Business logic |
-|       1 | Interpreter            |
 
-* Sample project
-** Translator bot
+* Onion architecture
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+REVEAL_HTML: <span class="first-circle circle"></span>
+#+REVEAL_HTML: <span class="second-circle circle"></span>
+#+REVEAL_HTML: <span class="third-circle circle green-border"></span>
+
+* Onion architecture
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+REVEAL_HTML: <span class="first-circle circle red-border"></span>
+#+REVEAL_HTML: <span class="second-circle circle"></span>
+#+REVEAL_HTML: <span class="third-circle circle"></span>
+
+
+** Трех слойный пирог
+| №      | Слой                  |
+|--------+-----------------------|
+|      3 | Бизнес логика         |
+|      2 | DSL для бизнес логики |
+|      1 | Интерпретатор         |
+
+* Тестовый проект
+** Бот переводчик
 Получает сообщение от пользователя через long polling, переводит с английского на русский, отправляет сообщение обратно пользователю.
 
 + Получение новых сообщений;
 + Отправка сообщений;
 + Перевод текста;
 ** Gist
+#+ATTR_REVEAL: :code_attribs data-line-numbers='1-23|1-4|6-7|9-10|12-13|15|16|17|19|20|21-32'
 #+BEGIN_SRC haskell
 data Message = Msg
   { chatId :: Integer
-  , text :: Text
+  , text   :: Text
   }
 
 pullUpdates :: IO [Message]
@@ -66,25 +118,24 @@ translate = ...
 
 proceed :: IO ()
 proceed = pullUpdates
-  >>= traverse_ (translateMsg >>= sendMessage)
+  >>= traverse_ (translateMsg >=> sendMessage)
   where
     translateMsg :: Message -> IO Message
     translateMsg (Msg ci t) = translate t
       <&> (maybe
              (Msg ci "Cannot translate text")
              (Msg ci))
-
 #+END_SRC
 
-** Problems
-+ Весь код в IO;
+** Проблемы
++ Весь код в IO; 🚀
 + Не тестируемый код;
 
 * Handle / Service pattern
-** Functional programming
-+ Functions
-+ Data
-** Key idea
+** Функциональное программирование
++ Функции;
++ Данные;
+** Основная идея
 #+BEGIN_SRC haskell
 data Handle = Handle
     { hPool   :: Pool Postgres.Connection
@@ -106,13 +157,13 @@ createUser :: Handle -> Text -> IO User
 createUser = ...
 #+END_SRC
 
-** Our project
-#+BEGIN_SRC haskell
-data Message = Msg
-  { chatId :: Integer
-  , text :: Text
-  }
+** Наш проект
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
 
+#+ATTR_REVEAL: :data_id handle :code_attribs data-line-numbers='1-18|1-8'
+#+BEGIN_SRC haskell
 pullUpdates :: IO [Message]
 pullUpdates = ...
 
@@ -124,27 +175,62 @@ translate = ...
 
 proceed :: IO ()
 proceed = pullUpdates
-  >>= traverse_ (translateMsg >>= sendMessage)
+  >>= traverse_ (translateMsg >=> sendMessage)
   where
     translateMsg :: Message -> IO Message
     translateMsg (Msg ci t) = translate t
       <&> (maybe
              (Msg ci "Cannot translate text")
              (Msg ci))
-
 #+END_SRC
 
-** Our project
+** Наш проект
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id handle :code_attribs data-line-numbers
+#+BEGIN_SRC haskell
+pullUpdates :: IO [Message]
+pullUpdates = ...
+
+sendMessage :: IO ()
+sendMessage = ...
+
+translate :: Text -> IO (Maybe Text)
+translate = ...
+#+END_SRC
+
+** Наш проект
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id handle :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 data Handle = Handle
   { pullUpdates :: IO [Message]
   , sendMessage :: IO ()
-  , translate :: Text -> IO (Maybe Text)
+  , translate   :: Text -> IO (Maybe Text)
+  }
+#+END_SRC
+
+** Наш проект
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id handle :code_attribs data-line-numbers='1-5|1-16|7-16'
+#+BEGIN_SRC haskell
+data Handle = Handle
+  { pullUpdates :: IO [Message]
+  , sendMessage :: IO ()
+  , translate   :: Text -> IO (Maybe Text)
   }
 
 proceed :: Handle -> IO ()
 proceed h = pullUpdates h
-  >>= traverse_ (translateMsg >>= sendMessage h)
+  >>= traverse_ (translateMsg >=> sendMessage h)
   where
     translateMsg :: Message -> m Message
     translateMsg (Msg ci t) = translate h t
@@ -154,26 +240,49 @@ proceed h = pullUpdates h
 
 #+END_SRC
 
-** Parametrize monad
+** Параметризуем монаду
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id handle2 :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
-data Handle m = Handle
-    { createUser :: Text -> m User
-    , getUserMail :: User -> m [Mail]
-    , ...
-    }
+data Handle = Handle
+  { pullUpdates :: IO [Message]
+  , sendMessage :: IO ()
+  , translate   :: Text -> IO (Maybe Text)
+  }
 #+END_SRC
 
-** Our project
+** Параметризуем монаду
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id handle2 :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 data Handle m = Handle
   { pullUpdates :: m [Message]
   , sendMessage :: m ()
-  , translate :: Text -> m (Maybe Text)
+  , translate   :: Text -> m (Maybe Text)
+  }
+#+END_SRC
+
+** Наш проект
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id handle2 :code_attribs data-line-numbers='1-16|7'
+#+BEGIN_SRC haskell
+data Handle m = Handle
+  { pullUpdates :: m [Message]
+  , sendMessage :: m ()
+  , translate   :: Text -> m (Maybe Text)
   }
 
 proceed :: MonadIO m => Handle m -> m ()
 proceed h = pullUpdates h
-  >>= traverse_ (translateMsg >>= sendMessage h)
+  >>= traverse_ (translateMsg >=> sendMessage h)
   where
     translateMsg :: Message -> m Message
     translateMsg (Msg ci t) = translate h t
@@ -183,52 +292,88 @@ proceed h = pullUpdates h
 
 #+END_SRC
 
-** Pros & Cons
-*** Pros:
-  + Simple & intuitive
-  + Performant
-  + Local substituation of a handlers
+** Плюсы и минусы
+*** Плюсы:
+  + Просто & Интуитивно;
+  + Производительно;
+  + Подмена хэндлеров в рантайме;
 
-*** Cons:
-  + Manual passing of handlers
-  + Tightly bound to execution monad
+*** Минусы:
+  + Ручное прокидывание хэндлеров;
+  + Привязанность исполняющей монаде;
 
 * Tagless final
-** Key idea
-From *Handle* data structure to *Type classes*!
+** Основная идея
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+** Основная идея
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id tf :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 data Handle m = Handle
   { pullUpdates :: m [Message]
   , sendMessage :: m ()
-  , translate :: Text -> m (Maybe Text)
+  , translate   :: Text -> m (Maybe Text)
   }
 #+END_SRC
-#+ATTR_HTML: :width 5% :style margin: -15px;
-[[./images/ArrowDown.png]]
+
+** Основная идея
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id tf :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 class Monad m => MonadMessenger m where
   pullUpdates :: m [Message]
   sendMessage :: m ()
-#+END_SRC
 
-#+BEGIN_SRC haskell
 class Monad m => MonadTranslator m where
   translate :: Text -> m (Maybe Text)
 #+END_SRC
+
+** Основная идея
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+Переход от структуры *Handle* к *Type class*'ам!
+#+ATTR_REVEAL: :data_id tf :code_attribs data-line-numbers='1-6|1-3|5-6'
+#+BEGIN_SRC haskell
+class Monad m => MonadMessenger m where
+  pullUpdates :: m [Message]
+  sendMessage :: m ()
+
+class Monad m => MonadTranslator m where
+  translate :: Text -> m (Maybe Text)
+#+END_SRC
+
 ** Type families
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id tf :code_attribs data-line-numbers='1-7|2'
 #+BEGIN_SRC haskell
 class Monad m => MonadMessenger m where
   type Message m :: *
   pullUpdates :: m [Message]
   sendMessage :: m ()
-#+END_SRC
 
-#+BEGIN_SRC haskell
 class Monad m => MonadTranslator m where
   translate :: Text -> m (Maybe Text)
 #+END_SRC
 
-** Our project
+** Наш проект
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id tf :code_attribs data-line-numbers='1-16|8'
 #+BEGIN_SRC haskell
 class Monad m => MonadMessenger m where
   pullUpdates :: m [Message]
@@ -238,19 +383,27 @@ class Monad m => MonadTranslator m where
   translate :: Text -> m (Maybe Text)
 
 proceed :: (MonadMessenger m, MonadTranslator m) => m ()
-proceed h = pullUpdates
-  >>= traverse_ (translateMsg >>= sendMessage)
+proceed = pullUpdates
+  >>= traverse_ (translateMsg >=> sendMessage)
   where
     translateMsg :: (MonadTranslator m) => Message -> m Message
     translateMsg (Msg ci t) = translate t
       <&> (maybe
              (Msg ci "Cannot translate text")
              (Msg ci))
-
 #+END_SRC
 
+** Тут будет ещё пачка слайдов
+
 * Free monads
-** Big Three
+** Интерпритируемые языки
+Тут будут картинки
+
+** Большая троица
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
 *Functor*
 #+BEGIN_SRC haskell
 class Functor f where
@@ -265,6 +418,26 @@ class Functor f => Applicative f where
 #+END_SRC
 
 *Monad*
+#+BEGIN_SRC haskell
+class Applicative m => Monad m where
+  return :: a -> m a
+  (>>=) :: m a -> (a -> m b) -> m b
+#+END_SRC
+
+** Functor
+#+BEGIN_SRC haskell
+class Functor f where
+  fmap :: (a -> b) -> f a -> f b
+#+END_SRC
+
+** Applicative
+#+BEGIN_SRC haskell
+class Functor f => Applicative f where
+  pure :: a -> f a
+  (<*>) :: f (a -> b) -> f a -> f b
+#+END_SRC
+
+** Monad
 #+BEGIN_SRC haskell
 class Applicative m => Monad m where
   return :: a -> m a
@@ -459,14 +632,75 @@ interpBotIO = interp botIO
 #+END_SRC
 
 * Freer monads
+** Generilized Algebraic Data Types (GADT)
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+** Generilized Algebraic Data Types (GADT)
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id gadt :code_attribs data-line-numbers
+#+BEGIN_SRC haskell
+data SomeType a
+  = First a
+  | Second a
+#+END_SRC
+
+** Generilized Algebraic Data Types (GADT)
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id gadt :code_attribs data-line-numbers
+#+BEGIN_SRC haskell
+data SomeType a where
+  First  :: a -> SomeType a
+  Second :: a -> SomeType a
+#+END_SRC
+
+** Generilized Algebraic Data Types (GADT)
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id gadt :code_attribs data-line-numbers
+#+BEGIN_SRC haskell
+data SomeType a where
+  First  :: a -> SomeType a
+  Second :: Int -> SomeType Int
+#+END_SRC
+
+** Generilized Algebraic Data Types (GADT)
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id gadt :code_attribs data-line-numbers
+#+BEGIN_SRC haskell
+data SomeType a where
+  First  :: b -> SomeType b
+  Second :: Int -> SomeType Int
+#+END_SRC
+
 ** Free monad
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 data Free f a
   = Pure a
   | Free (f (Free f a))
 #+END_SRC
-#+ATTR_HTML: :width 5% :style margin: -15px;
-[[./images/ArrowDown.png]]
+** Free monad
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 data Free f a where
   Pure   :: a -> Free f a

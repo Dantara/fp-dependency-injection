@@ -12,6 +12,8 @@
 <link rel="stylesheet" href="styles/tinkoff.css" id="theme"/>
 
 <link rel="stylesheet" href="styles/extra.css"/>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 <link rel="stylesheet" href="styles/monokai.css"/>
 </head>
 <body>
@@ -49,41 +51,94 @@
 </section>
 
 <section>
-<section id="slide-org776e81c">
-<h2 id="org776e81c">As software engeneers we want&#x2026;</h2>
-
+<section id="slide-orgc8a23d9" data-auto-animate>
+<h2 id="orgc8a23d9">Мы как разработчики хотим писать&#x2026;</h2>
 </section>
 </section>
 <section>
-<section id="slide-orgfe1eb50">
-<h2 id="orgfe1eb50">Dependency injection</h2>
-<div class="outline-text-2" id="text-orgfe1eb50">
-</div>
-</section>
-<section id="slide-orge5763e1">
-<h3 id="orge5763e1">Dependecy injection</h3>
-<p>
-Dependency Injection is a software design technique in which the creation and binding of dependencies are done outside of the dependent class.
-</p>
+<section id="slide-org8355f2e" data-auto-animate>
+<h2 id="org8355f2e">Мы как разработчики хотим писать&#x2026;</h2>
+<ul class="fragment appear">
+<li>Поддерживаемый код;</li>
 
-</section>
-<section id="slide-orgb9ae234">
-<h3 id="orgb9ae234">Benefits of DI</h3>
-<ul>
-<li>Testability</li>
-<li>Separation of concerns</li>
+</ul>
+<ul class="fragment appear">
+<li>Расширяемый код;</li>
+
+</ul>
+<ul class="fragment appear">
+<li>Переиспользуемый код;</li>
+
+</ul>
+<ul class="fragment appear">
+<li>Тестируемый код;</li>
 
 </ul>
 
 </section>
-<section id="slide-orge0b67a1">
-<h3 id="orge0b67a1">Onion architecture</h3>
+</section>
+<section>
+<section id="slide-orga59718a" data-auto-animate>
+<h2 id="orga59718a">Dependency injection</h2>
+</section>
+</section>
+<section>
+<section id="slide-org7ccd723" data-auto-animate>
+<h2 id="org7ccd723">Dependency injection</h2>
+<p>
+Dependency Injection (Внедрение зависимостей) - это метод проектирования программного обеспечения, при котором создание и привязка зависимостей выполняются вне зависимого класса.
+</p>
+
+</section>
+<section id="slide-org7693fd5">
+<h3 id="org7693fd5">Преимущества DI</h3>
+<ul class="fragment appear">
+<li>Separation of concerns (Разделение ответственностей);
+<ul>
+<li>Поддерживаемый код;</li>
+<li>Расширяемый код;</li>
+<li>Переиспользуемый код;</li>
+
+</ul></li>
+
+</ul>
+<ul class="fragment appear">
+<li>Тестируемость;</li>
+
+</ul>
+
+
+</section>
+</section>
+<section>
+<section id="slide-orgb63e64e" data-auto-animate>
+<h2 id="orgb63e64e">Onion architecture</h2>
 <span class="first-circle circle"></span>
 <span class="second-circle circle"></span>
 <span class="third-circle circle"></span>
+
 </section>
-<section id="slide-org18415aa">
-<h3 id="org18415aa">Three layers cake</h3>
+</section>
+<section>
+<section id="slide-org29b5205" data-auto-animate>
+<h2 id="org29b5205">Onion architecture</h2>
+<span class="first-circle circle"></span>
+<span class="second-circle circle"></span>
+<span class="third-circle circle green-border"></span>
+
+</section>
+</section>
+<section>
+<section id="slide-org92d7296" data-auto-animate>
+<h2 id="org92d7296">Onion architecture</h2>
+<span class="first-circle circle red-border"></span>
+<span class="second-circle circle"></span>
+<span class="third-circle circle"></span>
+
+
+</section>
+<section id="slide-org868cd4c">
+<h3 id="org868cd4c">Трех слойный пирог</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -94,24 +149,24 @@ Dependency Injection is a software design technique in which the creation and bi
 </colgroup>
 <thead>
 <tr>
-<th scope="col" class="org-right">Layer №</th>
-<th scope="col" class="org-left">Purpose</th>
+<th scope="col" class="org-right">№</th>
+<th scope="col" class="org-left">Слой</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="org-right">3</td>
-<td class="org-left">Business logic</td>
+<td class="org-left">Бизнес логика</td>
 </tr>
 
 <tr>
 <td class="org-right">2</td>
-<td class="org-left">DSL for Business logic</td>
+<td class="org-left">DSL для бизнес логики</td>
 </tr>
 
 <tr>
 <td class="org-right">1</td>
-<td class="org-left">Interpreter</td>
+<td class="org-left">Интерпретатор</td>
 </tr>
 </tbody>
 </table>
@@ -119,13 +174,13 @@ Dependency Injection is a software design technique in which the creation and bi
 </section>
 </section>
 <section>
-<section id="slide-org2d65352">
-<h2 id="org2d65352">Sample project</h2>
-<div class="outline-text-2" id="text-org2d65352">
+<section id="slide-org7a89298">
+<h2 id="org7a89298">Тестовый проект</h2>
+<div class="outline-text-2" id="text-org7a89298">
 </div>
 </section>
-<section id="slide-org0df148b">
-<h3 id="org0df148b">Translator bot</h3>
+<section id="slide-orgbcce0b8">
+<h3 id="orgbcce0b8">Бот переводчик</h3>
 <p>
 Получает сообщение от пользователя через long polling, переводит с английского на русский, отправляет сообщение обратно пользователю.
 </p>
@@ -137,13 +192,13 @@ Dependency Injection is a software design technique in which the creation and bi
 
 </ul>
 </section>
-<section id="slide-orge7b6d6c">
-<h3 id="orge7b6d6c">Gist</h3>
+<section id="slide-org5e109f4">
+<h3 id="org5e109f4">Gist</h3>
 <div class="org-src-container">
 
-<pre><code class="haskell" >data Message = Msg
+<pre><code class="haskell" data-line-numbers='1-23|1-4|6-7|9-10|12-13|15|16|17|19|20|21-32'>data Message = Msg
   { chatId :: Integer
-  , text :: Text
+  , text   :: Text
   }
 
 pullUpdates :: IO [Message]
@@ -157,22 +212,21 @@ translate = ...
 
 proceed :: IO ()
 proceed = pullUpdates
-  &gt;&gt;= traverse_ (translateMsg &gt;&gt;= sendMessage)
+  &gt;&gt;= traverse_ (translateMsg &gt;=&gt; sendMessage)
   where
     translateMsg :: Message -&gt; IO Message
     translateMsg (Msg ci t) = translate t
       &lt;&amp;&gt; (maybe
              (Msg ci "Cannot translate text")
              (Msg ci))
-
 </code></pre>
 </div>
 
 </section>
-<section id="slide-org9412f55">
-<h3 id="org9412f55">Problems</h3>
+<section id="slide-org431b58c">
+<h3 id="org431b58c">Проблемы</h3>
 <ul>
-<li>Весь код в IO;</li>
+<li>Весь код в IO; 🚀</li>
 <li>Не тестируемый код;</li>
 
 </ul>
@@ -180,21 +234,21 @@ proceed = pullUpdates
 </section>
 </section>
 <section>
-<section id="slide-org2d26baf">
-<h2 id="org2d26baf">Handle / Service pattern</h2>
-<div class="outline-text-2" id="text-org2d26baf">
+<section id="slide-orgaea84ad">
+<h2 id="orgaea84ad">Handle / Service pattern</h2>
+<div class="outline-text-2" id="text-orgaea84ad">
 </div>
 </section>
-<section id="slide-orga210212">
-<h3 id="orga210212">Functional programming</h3>
+<section id="slide-org63e597e">
+<h3 id="org63e597e">Функциональное программирование</h3>
 <ul>
-<li>Functions</li>
-<li>Data</li>
+<li>Функции;</li>
+<li>Данные;</li>
 
 </ul>
 </section>
-<section id="slide-orga13c089">
-<h3 id="orga13c089">Key idea</h3>
+<section id="slide-orgfcfd36f">
+<h3 id="orgfcfd36f">Основная идея</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Handle = Handle
@@ -206,8 +260,8 @@ proceed = pullUpdates
 </code></pre>
 </div>
 </section>
-<section id="slide-orgdf4eee1">
-<h3 id="orgdf4eee1">Handle interface</h3>
+<section id="slide-org2b5e80c">
+<h3 id="org2b5e80c">Handle interface</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Handle = Handle
@@ -225,16 +279,11 @@ createUser = ...
 </div>
 
 </section>
-<section id="slide-org2ffe604">
-<h3 id="org2ffe604">Our project</h3>
+<section id="slide-orga6a5ed2" data-auto-animate>
+<h3 id="orga6a5ed2">Наш проект</h3>
 <div class="org-src-container">
 
-<pre><code class="haskell" >data Message = Msg
-  { chatId :: Integer
-  , text :: Text
-  }
-
-pullUpdates :: IO [Message]
+<pre><code class="haskell" data-line-numbers='1-18|1-8'>pullUpdates :: IO [Message]
 pullUpdates = ...
 
 sendMessage :: IO ()
@@ -245,31 +294,59 @@ translate = ...
 
 proceed :: IO ()
 proceed = pullUpdates
-  &gt;&gt;= traverse_ (translateMsg &gt;&gt;= sendMessage)
+  &gt;&gt;= traverse_ (translateMsg &gt;=&gt; sendMessage)
   where
     translateMsg :: Message -&gt; IO Message
     translateMsg (Msg ci t) = translate t
       &lt;&amp;&gt; (maybe
              (Msg ci "Cannot translate text")
              (Msg ci))
-
 </code></pre>
 </div>
 
 </section>
-<section id="slide-org2ed5905">
-<h3 id="org2ed5905">Our project</h3>
+<section id="slide-orgd844634" data-auto-animate>
+<h3 id="orgd844634">Наш проект</h3>
 <div class="org-src-container">
 
-<pre><code class="haskell" >data Handle = Handle
+<pre><code class="haskell" data-line-numbers>pullUpdates :: IO [Message]
+pullUpdates = ...
+
+sendMessage :: IO ()
+sendMessage = ...
+
+translate :: Text -&gt; IO (Maybe Text)
+translate = ...
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org6e317c6" data-auto-animate>
+<h3 id="org6e317c6">Наш проект</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" data-line-numbers>data Handle = Handle
   { pullUpdates :: IO [Message]
   , sendMessage :: IO ()
-  , translate :: Text -&gt; IO (Maybe Text)
+  , translate   :: Text -&gt; IO (Maybe Text)
+  }
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org8bd9aed" data-auto-animate>
+<h3 id="org8bd9aed">Наш проект</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" data-line-numbers='1-5|1-16|7-16'>data Handle = Handle
+  { pullUpdates :: IO [Message]
+  , sendMessage :: IO ()
+  , translate   :: Text -&gt; IO (Maybe Text)
   }
 
 proceed :: Handle -&gt; IO ()
 proceed h = pullUpdates h
-  &gt;&gt;= traverse_ (translateMsg &gt;&gt;= sendMessage h)
+  &gt;&gt;= traverse_ (translateMsg &gt;=&gt; sendMessage h)
   where
     translateMsg :: Message -&gt; m Message
     translateMsg (Msg ci t) = translate h t
@@ -281,32 +358,45 @@ proceed h = pullUpdates h
 </div>
 
 </section>
-<section id="slide-org6082437">
-<h3 id="org6082437">Parametrize monad</h3>
+<section id="slide-orgb512de1" data-auto-animate>
+<h3 id="orgb512de1">Параметризуем монаду</h3>
 <div class="org-src-container">
 
-<pre><code class="haskell" >data Handle m = Handle
-    { createUser :: Text -&gt; m User
-    , getUserMail :: User -&gt; m [Mail]
-    , ...
-    }
+<pre><code class="haskell" data-line-numbers>data Handle = Handle
+  { pullUpdates :: IO [Message]
+  , sendMessage :: IO ()
+  , translate   :: Text -&gt; IO (Maybe Text)
+  }
 </code></pre>
 </div>
 
 </section>
-<section id="slide-orgcb51590">
-<h3 id="orgcb51590">Our project</h3>
+<section id="slide-orgb138211" data-auto-animate>
+<h3 id="orgb138211">Параметризуем монаду</h3>
 <div class="org-src-container">
 
-<pre><code class="haskell" >data Handle m = Handle
+<pre><code class="haskell" data-line-numbers>data Handle m = Handle
   { pullUpdates :: m [Message]
   , sendMessage :: m ()
-  , translate :: Text -&gt; m (Maybe Text)
+  , translate   :: Text -&gt; m (Maybe Text)
+  }
+</code></pre>
+</div>
+
+</section>
+<section id="slide-orgef51343" data-auto-animate>
+<h3 id="orgef51343">Наш проект</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" data-line-numbers='1-16|7'>data Handle m = Handle
+  { pullUpdates :: m [Message]
+  , sendMessage :: m ()
+  , translate   :: Text -&gt; m (Maybe Text)
   }
 
 proceed :: MonadIO m =&gt; Handle m -&gt; m ()
 proceed h = pullUpdates h
-  &gt;&gt;= traverse_ (translateMsg &gt;&gt;= sendMessage h)
+  &gt;&gt;= traverse_ (translateMsg &gt;=&gt; sendMessage h)
   where
     translateMsg :: Message -&gt; m Message
     translateMsg (Msg ci t) = translate h t
@@ -318,95 +408,104 @@ proceed h = pullUpdates h
 </div>
 
 </section>
-<section id="slide-org343de20">
-<h3 id="org343de20">Pros &amp; Cons</h3>
-<div class="outline-text-3" id="text-org343de20">
+<section id="slide-org118fcb3">
+<h3 id="org118fcb3">Плюсы и минусы</h3>
+<div class="outline-text-3" id="text-org118fcb3">
 </div>
 </section>
-<section id="slide-org69edc9b">
-<h4 id="org69edc9b">Pros:</h4>
+<section id="slide-org05fca69">
+<h4 id="org05fca69">Плюсы:</h4>
 <ul>
-<li>Simple &amp; intuitive</li>
-<li>Performant</li>
-<li>Local substituation of a handlers</li>
+<li>Просто &amp; Интуитивно;</li>
+<li>Производительно;</li>
+<li>Подмена хэндлеров в рантайме;</li>
 
 </ul>
 
 </section>
-<section id="slide-orgf15b27c">
-<h4 id="orgf15b27c">Cons:</h4>
+<section id="slide-org40c628c">
+<h4 id="org40c628c">Минусы:</h4>
 <ul>
-<li>Manual passing of handlers</li>
-<li>Tightly bound to execution monad</li>
+<li>Ручное прокидывание хэндлеров;</li>
+<li>Привязанность исполняющей монаде;</li>
 
 </ul>
 
 </section>
 </section>
 <section>
-<section id="slide-org60532ce">
-<h2 id="org60532ce">Tagless final</h2>
-<div class="outline-text-2" id="text-org60532ce">
+<section id="slide-org6998ef1">
+<h2 id="org6998ef1">Tagless final</h2>
+<div class="outline-text-2" id="text-org6998ef1">
 </div>
 </section>
-<section id="slide-org4f168aa">
-<h3 id="org4f168aa">Key idea</h3>
-<p>
-From <b>Handle</b> data structure to <b>Type classes</b>!
-</p>
+<section id="slide-orgf32db00" data-auto-animate>
+<h3 id="orgf32db00">Основная идея</h3>
+</section>
+<section id="slide-orgc32b901" data-auto-animate>
+<h3 id="orgc32b901">Основная идея</h3>
 <div class="org-src-container">
 
-<pre><code class="haskell" >data Handle m = Handle
+<pre><code class="haskell" data-line-numbers>data Handle m = Handle
   { pullUpdates :: m [Message]
   , sendMessage :: m ()
-  , translate :: Text -&gt; m (Maybe Text)
+  , translate   :: Text -&gt; m (Maybe Text)
   }
 </code></pre>
 </div>
 
-<div id="orgf4337f0" class="figure">
-<p><img src="./images/ArrowDown.png" alt="ArrowDown.png" width="5%" style="margin: -15px;" />
-</p>
-</div>
+</section>
+<section id="slide-orga3449d8" data-auto-animate>
+<h3 id="orga3449d8">Основная идея</h3>
 <div class="org-src-container">
 
-<pre><code class="haskell" >class Monad m =&gt; MonadMessenger m where
+<pre><code class="haskell" data-line-numbers>class Monad m =&gt; MonadMessenger m where
   pullUpdates :: m [Message]
   sendMessage :: m ()
-</code></pre>
-</div>
 
-<div class="org-src-container">
-
-<pre><code class="haskell" >class Monad m =&gt; MonadTranslator m where
+class Monad m =&gt; MonadTranslator m where
   translate :: Text -&gt; m (Maybe Text)
 </code></pre>
 </div>
+
 </section>
-<section id="slide-org658e728">
-<h3 id="org658e728">Type families</h3>
+<section id="slide-org5381d2a" data-auto-animate>
+<h3 id="org5381d2a">Основная идея</h3>
+<p>
+Переход от структуры <b>Handle</b> к <b>Type class</b>&rsquo;ам!
+</p>
 <div class="org-src-container">
 
-<pre><code class="haskell" >class Monad m =&gt; MonadMessenger m where
+<pre><code class="haskell" data-line-numbers='1-6|1-3|5-6'>class Monad m =&gt; MonadMessenger m where
+  pullUpdates :: m [Message]
+  sendMessage :: m ()
+
+class Monad m =&gt; MonadTranslator m where
+  translate :: Text -&gt; m (Maybe Text)
+</code></pre>
+</div>
+
+</section>
+<section id="slide-orgb43f0be" data-auto-animate>
+<h3 id="orgb43f0be">Type families</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" data-line-numbers='1-7|2'>class Monad m =&gt; MonadMessenger m where
   type Message m :: *
   pullUpdates :: m [Message]
   sendMessage :: m ()
-</code></pre>
-</div>
 
-<div class="org-src-container">
-
-<pre><code class="haskell" >class Monad m =&gt; MonadTranslator m where
+class Monad m =&gt; MonadTranslator m where
   translate :: Text -&gt; m (Maybe Text)
 </code></pre>
 </div>
 
 </section>
-<section id="slide-org0b137e8">
-<h3 id="org0b137e8">Our project</h3>
+<section id="slide-org30428ea" data-auto-animate>
+<h3 id="org30428ea">Наш проект</h3>
 <div class="org-src-container">
 
-<pre><code class="haskell" >class Monad m =&gt; MonadMessenger m where
+<pre><code class="haskell" data-line-numbers='1-16|8'>class Monad m =&gt; MonadMessenger m where
   pullUpdates :: m [Message]
   sendMessage :: m ()
 
@@ -414,28 +513,38 @@ class Monad m =&gt; MonadTranslator m where
   translate :: Text -&gt; m (Maybe Text)
 
 proceed :: (MonadMessenger m, MonadTranslator m) =&gt; m ()
-proceed h = pullUpdates
-  &gt;&gt;= traverse_ (translateMsg &gt;&gt;= sendMessage)
+proceed = pullUpdates
+  &gt;&gt;= traverse_ (translateMsg &gt;=&gt; sendMessage)
   where
     translateMsg :: (MonadTranslator m) =&gt; Message -&gt; m Message
     translateMsg (Msg ci t) = translate t
       &lt;&amp;&gt; (maybe
              (Msg ci "Cannot translate text")
              (Msg ci))
-
 </code></pre>
 </div>
 
 </section>
+<section id="slide-org4105e7d">
+<h3 id="org4105e7d">Тут будет ещё пачка слайдов</h3>
+
+</section>
 </section>
 <section>
-<section id="slide-org183e434">
-<h2 id="org183e434">Free monads</h2>
-<div class="outline-text-2" id="text-org183e434">
+<section id="slide-orgbc2e83c">
+<h2 id="orgbc2e83c">Free monads</h2>
+<div class="outline-text-2" id="text-orgbc2e83c">
 </div>
 </section>
-<section id="slide-org4910ecf">
-<h3 id="org4910ecf">Big Three</h3>
+<section id="slide-orgd530a0f">
+<h3 id="orgd530a0f">Интерпритируемые языки</h3>
+<p>
+Тут будут картинки
+</p>
+
+</section>
+<section id="slide-orgcd572dd" data-auto-animate>
+<h3 id="orgcd572dd">Большая троица</h3>
 <p>
 <b>Functor</b>
 </p>
@@ -469,8 +578,40 @@ proceed h = pullUpdates
 </div>
 
 </section>
-<section id="slide-org3e52b1e">
-<h3 id="org3e52b1e">Monad</h3>
+<section id="slide-org66b9db6">
+<h3 id="org66b9db6">Functor</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >class Functor f where
+  fmap :: (a -&gt; b) -&gt; f a -&gt; f b
+</code></pre>
+</div>
+
+</section>
+<section id="slide-orgbc59737">
+<h3 id="orgbc59737">Applicative</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >class Functor f =&gt; Applicative f where
+  pure :: a -&gt; f a
+  (&lt;*&gt;) :: f (a -&gt; b) -&gt; f a -&gt; f b
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org410dae9">
+<h3 id="org410dae9">Monad</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" >class Applicative m =&gt; Monad m where
+  return :: a -&gt; m a
+  (&gt;&gt;=) :: m a -&gt; (a -&gt; m b) -&gt; m b
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org0689a6c">
+<h3 id="org0689a6c">Monad</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >class Applicative m =&gt; Monad m where
@@ -486,8 +627,8 @@ proceed h = pullUpdates
 </div>
 
 </section>
-<section id="slide-org31f3c92">
-<h3 id="org31f3c92">Monad</h3>
+<section id="slide-org6b6c08a">
+<h3 id="org6b6c08a">Monad</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >join :: (Monad m) =&gt; m (m a) -&gt; m a
@@ -503,8 +644,8 @@ fmap :: (a -&gt; b) -&gt; f a -&gt; f b
 </div>
 
 </section>
-<section id="slide-orgb332656">
-<h3 id="orgb332656">Key Idea</h3>
+<section id="slide-org8500d7a">
+<h3 id="org8500d7a">Key Idea</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Free f a
@@ -514,8 +655,8 @@ fmap :: (a -&gt; b) -&gt; f a -&gt; f b
 </div>
 
 </section>
-<section id="slide-org0365d38">
-<h3 id="org0365d38">Key Idea</h3>
+<section id="slide-org0f11356">
+<h3 id="org0f11356">Key Idea</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Free f a
@@ -532,8 +673,8 @@ Free :: f (m a) -&gt; m a  -- looks like join
 </div>
 
 </section>
-<section id="slide-org8d64454">
-<h3 id="org8d64454">Functor instance</h3>
+<section id="slide-org1309519">
+<h3 id="org1309519">Functor instance</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Free f a
@@ -551,8 +692,8 @@ Free :: f (m a) -&gt; m a  -- looks like join
 </div>
 
 </section>
-<section id="slide-org548c3c4">
-<h3 id="org548c3c4">Monad instance</h3>
+<section id="slide-org0941c60">
+<h3 id="org0941c60">Monad instance</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Free f a
@@ -571,8 +712,8 @@ Free :: f (m a) -&gt; m a  -- looks like join
 </div>
 
 </section>
-<section id="slide-org62476e3">
-<h3 id="org62476e3">Business logic functor</h3>
+<section id="slide-orgdf34b2a">
+<h3 id="orgdf34b2a">Business logic functor</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data BotF
@@ -583,8 +724,8 @@ Free :: f (m a) -&gt; m a  -- looks like join
 </div>
 
 </section>
-<section id="slide-org73b9ae9">
-<h3 id="org73b9ae9">Business logic functor</h3>
+<section id="slide-org316346c">
+<h3 id="org316346c">Business logic functor</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data BotF a
@@ -595,8 +736,8 @@ Free :: f (m a) -&gt; m a  -- looks like join
 </div>
 
 </section>
-<section id="slide-orga797a7d">
-<h3 id="orga797a7d">Business logic functor</h3>
+<section id="slide-org965819a">
+<h3 id="org965819a">Business logic functor</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data BotF a
@@ -607,8 +748,8 @@ Free :: f (m a) -&gt; m a  -- looks like join
 </div>
 
 </section>
-<section id="slide-orgc5cc818">
-<h3 id="orgc5cc818">Business logic functor</h3>
+<section id="slide-org4e6c0ca">
+<h3 id="org4e6c0ca">Business logic functor</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data BotF a
@@ -622,8 +763,8 @@ type Bot = Free BotF
 </div>
 
 </section>
-<section id="slide-orgff39533">
-<h3 id="orgff39533">Lift functor</h3>
+<section id="slide-orge36cd21">
+<h3 id="orge36cd21">Lift functor</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >liftF :: Functor f =&gt; f a -&gt; Free f a
@@ -633,8 +774,8 @@ liftF command = Free (fmap Pure command)
 
 
 </section>
-<section id="slide-org5248705">
-<h3 id="org5248705">Helper functions</h3>
+<section id="slide-org710fce7">
+<h3 id="org710fce7">Helper functions</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data BotF a
@@ -658,8 +799,8 @@ translate t = liftF (Translate t id)
 </div>
 
 </section>
-<section id="slide-orgb4fbe1d">
-<h3 id="orgb4fbe1d">Business logic</h3>
+<section id="slide-org6fa2fc4">
+<h3 id="org6fa2fc4">Business logic</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >proceed :: Bot ()
@@ -675,8 +816,8 @@ proceed h = pullUpdates
 </div>
 
 </section>
-<section id="slide-org080ce9a">
-<h3 id="org080ce9a">Interpreter</h3>
+<section id="slide-org3fd0212">
+<h3 id="org3fd0212">Interpreter</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >botIO :: BotF a -&gt; IO a
@@ -687,8 +828,8 @@ botIO (Translate t ft) = ...
 </div>
 
 </section>
-<section id="slide-org3647b15">
-<h3 id="org3647b15">Interpreter helpers</h3>
+<section id="slide-org6da1bd1">
+<h3 id="org6da1bd1">Interpreter helpers</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >freeM :: (Functor f, Functor g)
@@ -717,8 +858,8 @@ interp phi = monad . freeM phi
 </div>
 
 </section>
-<section id="slide-org33e4c86">
-<h3 id="org33e4c86">Interpreter</h3>
+<section id="slide-org9750623">
+<h3 id="org9750623">Interpreter</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >botIO :: BotF a -&gt; IO a
@@ -742,35 +883,80 @@ interpBotIO = interp botIO
 </section>
 </section>
 <section>
-<section id="slide-org2251a51">
-<h2 id="org2251a51">Freer monads</h2>
-<div class="outline-text-2" id="text-org2251a51">
+<section id="slide-orgda5afa9">
+<h2 id="orgda5afa9">Freer monads</h2>
+<div class="outline-text-2" id="text-orgda5afa9">
 </div>
 </section>
-<section id="slide-org111f725">
-<h3 id="org111f725">Free monad</h3>
+<section id="slide-orgb6e5660" data-auto-animate>
+<h3 id="orgb6e5660">Generilized Algebraic Data Types (GADT)</h3>
+</section>
+<section id="slide-orgebe52e9" data-auto-animate>
+<h3 id="orgebe52e9">Generilized Algebraic Data Types (GADT)</h3>
 <div class="org-src-container">
 
-<pre><code class="haskell" >data Free f a
+<pre><code class="haskell" data-line-numbers>data SomeType a
+  = First a
+  | Second a
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org49a1e60" data-auto-animate>
+<h3 id="org49a1e60">Generilized Algebraic Data Types (GADT)</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" data-line-numbers>data SomeType a where
+  First  :: a -&gt; SomeType a
+  Second :: a -&gt; SomeType a
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org1d82bb9" data-auto-animate>
+<h3 id="org1d82bb9">Generilized Algebraic Data Types (GADT)</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" data-line-numbers>data SomeType a where
+  First  :: a -&gt; SomeType a
+  Second :: Int -&gt; SomeType Int
+</code></pre>
+</div>
+
+</section>
+<section id="slide-orgfeb2b5d" data-auto-animate>
+<h3 id="orgfeb2b5d">Generilized Algebraic Data Types (GADT)</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" data-line-numbers>data SomeType a where
+  First  :: b -&gt; SomeType b
+  Second :: Int -&gt; SomeType Int
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org3c3a03b" data-auto-animate>
+<h3 id="org3c3a03b">Free monad</h3>
+<div class="org-src-container">
+
+<pre><code class="haskell" data-line-numbers>data Free f a
   = Pure a
   | Free (f (Free f a))
 </code></pre>
 </div>
-
-<div id="org1feaf5b" class="figure">
-<p><img src="./images/ArrowDown.png" alt="ArrowDown.png" width="5%" style="margin: -15px;" />
-</p>
-</div>
+</section>
+<section id="slide-org2a6a950" data-auto-animate>
+<h3 id="org2a6a950">Free monad</h3>
 <div class="org-src-container">
 
-<pre><code class="haskell" >data Free f a where
+<pre><code class="haskell" data-line-numbers>data Free f a where
   Pure   :: a -&gt; Free f a
   Impure :: f (Free f a) -&gt; Free f a
 </code></pre>
 </div>
 </section>
-<section id="slide-orgc2587b0">
-<h3 id="orgc2587b0">Simple trick</h3>
+<section id="slide-orgdfeb8aa">
+<h3 id="orgdfeb8aa">Simple trick</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Lan g a where
@@ -784,8 +970,8 @@ lan ga = Lan ga id
 </code></pre>
 </div>
 </section>
-<section id="slide-org11a6ef1">
-<h3 id="org11a6ef1">Substitution</h3>
+<section id="slide-orgaa81531">
+<h3 id="orgaa81531">Substitution</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Free f a where
@@ -795,7 +981,7 @@ lan ga = Lan ga id
 </div>
 
 
-<div id="org810d1ab" class="figure">
+<div id="orgb6d734a" class="figure">
 <p><img src="./images/ArrowDown.png" alt="ArrowDown.png" width="5%" style="margin: -15px;" />
 </p>
 </div>
@@ -808,7 +994,7 @@ lan ga = Lan ga id
 </div>
 
 
-<div id="org0d6c701" class="figure">
+<div id="org5426bb6" class="figure">
 <p><img src="./images/ArrowDown.png" alt="ArrowDown.png" width="5%" style="margin: -15px;" />
 </p>
 </div>
@@ -822,13 +1008,13 @@ lan ga = Lan ga id
 </section>
 </section>
 <section>
-<section id="slide-org2386221">
-<h2 id="org2386221">Effects systems</h2>
+<section id="slide-org7309377">
+<h2 id="org7309377">Effects systems</h2>
 </section>
 </section>
 <section>
-<section id="slide-orgcecc016">
-<h2 id="orgcecc016">Questions?</h2>
+<section id="slide-org31081a7">
+<h2 id="org31081a7">Questions?</h2>
 </section>
 </section>
 </div>
