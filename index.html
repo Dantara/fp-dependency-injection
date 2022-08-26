@@ -20,38 +20,55 @@
 <section id="sec-title-slide" data-background="rgb(255, 221, 45)" data-state="title-slide">
 <img src="images/logo.svg" id="title-img">
 <h2 class="title">Dependency injection</h2>
-<h3 class="subtitle">in functional programming<h3>
+<h3 class="subtitle">in functional programming</h3>
 <h6 class="author">Nikita Aleshchenko</h6>
 </section>
+<section class="about-slide" data-background-color="#757C8D" style="height: 600px;">
+  <div class="block">
+    <div id="about-column">
+      <img src="images/logo-yel.svg">
+      <img id="about-travel-img" src="images/travel.png">
+    </div>
+    <div id="about-block">
+      <img src="images/me.png">
 
+      <p>Никита Алещенко | Haskell разработчик</p>
+
+      <div id="about-contacts">
+        <div class="about-contacts-line">
+          <img src="images/at.svg">
+          <p>n.aleshchenko@tinkoff.ru</p>
+        </div>
+        <div class="about-contacts-line">
+          <img src="images/gh.png">
+          <p>Dantara</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section>
-<section id="slide-orgcf9e81f">
-<h2 id="orgcf9e81f">Слайд обо мне</h2>
+<section id="slide-org776e81c">
+<h2 id="org776e81c">As software engeneers we want&#x2026;</h2>
 
 </section>
 </section>
 <section>
-<section id="slide-org9cb6139">
-<h2 id="org9cb6139">As software engeneers we want&#x2026;</h2>
-
-</section>
-</section>
-<section>
-<section id="slide-org5f9f41d">
-<h2 id="org5f9f41d">Dependency injection</h2>
-<div class="outline-text-2" id="text-org5f9f41d">
+<section id="slide-orgfe1eb50">
+<h2 id="orgfe1eb50">Dependency injection</h2>
+<div class="outline-text-2" id="text-orgfe1eb50">
 </div>
 </section>
-<section id="slide-org67bc9de">
-<h3 id="org67bc9de">Dependecy injection</h3>
+<section id="slide-orge5763e1">
+<h3 id="orge5763e1">Dependecy injection</h3>
 <p>
 Dependency Injection is a software design technique in which the creation and binding of dependencies are done outside of the dependent class.
 </p>
 
 </section>
-<section id="slide-org99699ab">
-<h3 id="org99699ab">Benefits of DI</h3>
+<section id="slide-orgb9ae234">
+<h3 id="orgb9ae234">Benefits of DI</h3>
 <ul>
 <li>Testability</li>
 <li>Separation of concerns</li>
@@ -59,14 +76,14 @@ Dependency Injection is a software design technique in which the creation and bi
 </ul>
 
 </section>
-<section id="slide-org061fc27">
-<h3 id="org061fc27">Onion architecture</h3>
-<span class="first-circle"></span>
-<span class="second-circle"></span>
-<span class="third-circle"></span>
+<section id="slide-orge0b67a1">
+<h3 id="orge0b67a1">Onion architecture</h3>
+<span class="first-circle circle"></span>
+<span class="second-circle circle"></span>
+<span class="third-circle circle"></span>
 </section>
-<section id="slide-orgae6ccce">
-<h3 id="orgae6ccce">Three layers cake</h3>
+<section id="slide-org18415aa">
+<h3 id="org18415aa">Three layers cake</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -102,13 +119,13 @@ Dependency Injection is a software design technique in which the creation and bi
 </section>
 </section>
 <section>
-<section id="slide-org348cc3a">
-<h2 id="org348cc3a">Sample project</h2>
-<div class="outline-text-2" id="text-org348cc3a">
+<section id="slide-org2d65352">
+<h2 id="org2d65352">Sample project</h2>
+<div class="outline-text-2" id="text-org2d65352">
 </div>
 </section>
-<section id="slide-org3c15a23">
-<h3 id="org3c15a23">Translator bot</h3>
+<section id="slide-org0df148b">
+<h3 id="org0df148b">Translator bot</h3>
 <p>
 Получает сообщение от пользователя через long polling, переводит с английского на русский, отправляет сообщение обратно пользователю.
 </p>
@@ -120,8 +137,8 @@ Dependency Injection is a software design technique in which the creation and bi
 
 </ul>
 </section>
-<section id="slide-org51e199e">
-<h3 id="org51e199e">Gist</h3>
+<section id="slide-orge7b6d6c">
+<h3 id="orge7b6d6c">Gist</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Message = Msg
@@ -152,8 +169,8 @@ proceed = pullUpdates
 </div>
 
 </section>
-<section id="slide-org4ee809b">
-<h3 id="org4ee809b">Problems</h3>
+<section id="slide-org9412f55">
+<h3 id="org9412f55">Problems</h3>
 <ul>
 <li>Весь код в IO;</li>
 <li>Не тестируемый код;</li>
@@ -163,21 +180,21 @@ proceed = pullUpdates
 </section>
 </section>
 <section>
-<section id="slide-org7156b36">
-<h2 id="org7156b36">Handle / Service pattern</h2>
-<div class="outline-text-2" id="text-org7156b36">
+<section id="slide-org2d26baf">
+<h2 id="org2d26baf">Handle / Service pattern</h2>
+<div class="outline-text-2" id="text-org2d26baf">
 </div>
 </section>
-<section id="slide-org6dea18f">
-<h3 id="org6dea18f">Functional programming</h3>
+<section id="slide-orga210212">
+<h3 id="orga210212">Functional programming</h3>
 <ul>
 <li>Functions</li>
 <li>Data</li>
 
 </ul>
 </section>
-<section id="slide-orgb07c65f">
-<h3 id="orgb07c65f">Key idea</h3>
+<section id="slide-orga13c089">
+<h3 id="orga13c089">Key idea</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Handle = Handle
@@ -189,8 +206,8 @@ proceed = pullUpdates
 </code></pre>
 </div>
 </section>
-<section id="slide-org516b22c">
-<h3 id="org516b22c">Handle interface</h3>
+<section id="slide-orgdf4eee1">
+<h3 id="orgdf4eee1">Handle interface</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Handle = Handle
@@ -208,8 +225,8 @@ createUser = ...
 </div>
 
 </section>
-<section id="slide-orgd0482b1">
-<h3 id="orgd0482b1">Our project</h3>
+<section id="slide-org2ffe604">
+<h3 id="org2ffe604">Our project</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Message = Msg
@@ -240,8 +257,8 @@ proceed = pullUpdates
 </div>
 
 </section>
-<section id="slide-orgd3f7ee4">
-<h3 id="orgd3f7ee4">Our project</h3>
+<section id="slide-org2ed5905">
+<h3 id="org2ed5905">Our project</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Handle = Handle
@@ -264,8 +281,8 @@ proceed h = pullUpdates h
 </div>
 
 </section>
-<section id="slide-org2965143">
-<h3 id="org2965143">Parametrize monad</h3>
+<section id="slide-org6082437">
+<h3 id="org6082437">Parametrize monad</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Handle m = Handle
@@ -276,10 +293,9 @@ proceed h = pullUpdates h
 </code></pre>
 </div>
 
-
 </section>
-<section id="slide-org3717473">
-<h3 id="org3717473">Our project</h3>
+<section id="slide-orgcb51590">
+<h3 id="orgcb51590">Our project</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Handle m = Handle
@@ -302,36 +318,39 @@ proceed h = pullUpdates h
 </div>
 
 </section>
-<section id="slide-orgcf62b27">
-<h3 id="orgcf62b27">Pros &amp; cons</h3>
-<ul>
-<li>Pros:
+<section id="slide-org343de20">
+<h3 id="org343de20">Pros &amp; Cons</h3>
+<div class="outline-text-3" id="text-org343de20">
+</div>
+</section>
+<section id="slide-org69edc9b">
+<h4 id="org69edc9b">Pros:</h4>
 <ul>
 <li>Simple &amp; intuitive</li>
 <li>Performant</li>
 <li>Local substituation of a handlers</li>
 
-</ul></li>
+</ul>
 
-<li>Cons:
+</section>
+<section id="slide-orgf15b27c">
+<h4 id="orgf15b27c">Cons:</h4>
 <ul>
 <li>Manual passing of handlers</li>
 <li>Tightly bound to execution monad</li>
-
-</ul></li>
 
 </ul>
 
 </section>
 </section>
 <section>
-<section id="slide-org6b76e47">
-<h2 id="org6b76e47">Tagless final</h2>
-<div class="outline-text-2" id="text-org6b76e47">
+<section id="slide-org60532ce">
+<h2 id="org60532ce">Tagless final</h2>
+<div class="outline-text-2" id="text-org60532ce">
 </div>
 </section>
-<section id="slide-org40d6cea">
-<h3 id="org40d6cea">Key idea</h3>
+<section id="slide-org4f168aa">
+<h3 id="org4f168aa">Key idea</h3>
 <p>
 From <b>Handle</b> data structure to <b>Type classes</b>!
 </p>
@@ -345,7 +364,7 @@ From <b>Handle</b> data structure to <b>Type classes</b>!
 </code></pre>
 </div>
 
-<div id="org8bb731f" class="figure">
+<div id="orgf4337f0" class="figure">
 <p><img src="./images/ArrowDown.png" alt="ArrowDown.png" width="5%" style="margin: -15px;" />
 </p>
 </div>
@@ -364,8 +383,8 @@ From <b>Handle</b> data structure to <b>Type classes</b>!
 </code></pre>
 </div>
 </section>
-<section id="slide-org451440e">
-<h3 id="org451440e">Type families</h3>
+<section id="slide-org658e728">
+<h3 id="org658e728">Type families</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >class Monad m =&gt; MonadMessenger m where
@@ -383,8 +402,8 @@ From <b>Handle</b> data structure to <b>Type classes</b>!
 </div>
 
 </section>
-<section id="slide-org5f8004e">
-<h3 id="org5f8004e">Our project</h3>
+<section id="slide-org0b137e8">
+<h3 id="org0b137e8">Our project</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >class Monad m =&gt; MonadMessenger m where
@@ -410,13 +429,13 @@ proceed h = pullUpdates
 </section>
 </section>
 <section>
-<section id="slide-org343aaba">
-<h2 id="org343aaba">Free monads</h2>
-<div class="outline-text-2" id="text-org343aaba">
+<section id="slide-org183e434">
+<h2 id="org183e434">Free monads</h2>
+<div class="outline-text-2" id="text-org183e434">
 </div>
 </section>
-<section id="slide-org1a96d1f">
-<h3 id="org1a96d1f">Big Three</h3>
+<section id="slide-org4910ecf">
+<h3 id="org4910ecf">Big Three</h3>
 <p>
 <b>Functor</b>
 </p>
@@ -450,8 +469,8 @@ proceed h = pullUpdates
 </div>
 
 </section>
-<section id="slide-org9b31fbb">
-<h3 id="org9b31fbb">Monad</h3>
+<section id="slide-org3e52b1e">
+<h3 id="org3e52b1e">Monad</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >class Applicative m =&gt; Monad m where
@@ -467,8 +486,8 @@ proceed h = pullUpdates
 </div>
 
 </section>
-<section id="slide-org7ad699f">
-<h3 id="org7ad699f">Monad</h3>
+<section id="slide-org31f3c92">
+<h3 id="org31f3c92">Monad</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >join :: (Monad m) =&gt; m (m a) -&gt; m a
@@ -484,8 +503,8 @@ fmap :: (a -&gt; b) -&gt; f a -&gt; f b
 </div>
 
 </section>
-<section id="slide-org4eb715e">
-<h3 id="org4eb715e">Key Idea</h3>
+<section id="slide-orgb332656">
+<h3 id="orgb332656">Key Idea</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Free f a
@@ -495,8 +514,8 @@ fmap :: (a -&gt; b) -&gt; f a -&gt; f b
 </div>
 
 </section>
-<section id="slide-org7d08623">
-<h3 id="org7d08623">Key Idea</h3>
+<section id="slide-org0365d38">
+<h3 id="org0365d38">Key Idea</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Free f a
@@ -513,8 +532,8 @@ Free :: f (m a) -&gt; m a  -- looks like join
 </div>
 
 </section>
-<section id="slide-orgcf2ffda">
-<h3 id="orgcf2ffda">Functor instance</h3>
+<section id="slide-org8d64454">
+<h3 id="org8d64454">Functor instance</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Free f a
@@ -532,8 +551,8 @@ Free :: f (m a) -&gt; m a  -- looks like join
 </div>
 
 </section>
-<section id="slide-org3b4cfb8">
-<h3 id="org3b4cfb8">Monad instance</h3>
+<section id="slide-org548c3c4">
+<h3 id="org548c3c4">Monad instance</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Free f a
@@ -552,8 +571,8 @@ Free :: f (m a) -&gt; m a  -- looks like join
 </div>
 
 </section>
-<section id="slide-org21298c2">
-<h3 id="org21298c2">Business logic functor</h3>
+<section id="slide-org62476e3">
+<h3 id="org62476e3">Business logic functor</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data BotF
@@ -564,8 +583,8 @@ Free :: f (m a) -&gt; m a  -- looks like join
 </div>
 
 </section>
-<section id="slide-org1e02e80">
-<h3 id="org1e02e80">Business logic functor</h3>
+<section id="slide-org73b9ae9">
+<h3 id="org73b9ae9">Business logic functor</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data BotF a
@@ -576,8 +595,8 @@ Free :: f (m a) -&gt; m a  -- looks like join
 </div>
 
 </section>
-<section id="slide-org1a38233">
-<h3 id="org1a38233">Business logic functor</h3>
+<section id="slide-orga797a7d">
+<h3 id="orga797a7d">Business logic functor</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data BotF a
@@ -588,8 +607,8 @@ Free :: f (m a) -&gt; m a  -- looks like join
 </div>
 
 </section>
-<section id="slide-org25ac37c">
-<h3 id="org25ac37c">Business logic functor</h3>
+<section id="slide-orgc5cc818">
+<h3 id="orgc5cc818">Business logic functor</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data BotF a
@@ -603,8 +622,8 @@ type Bot = Free BotF
 </div>
 
 </section>
-<section id="slide-orgcc1d0be">
-<h3 id="orgcc1d0be">Lift functor</h3>
+<section id="slide-orgff39533">
+<h3 id="orgff39533">Lift functor</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >liftF :: Functor f =&gt; f a -&gt; Free f a
@@ -614,8 +633,8 @@ liftF command = Free (fmap Pure command)
 
 
 </section>
-<section id="slide-org13e76c2">
-<h3 id="org13e76c2">Helper functions</h3>
+<section id="slide-org5248705">
+<h3 id="org5248705">Helper functions</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data BotF a
@@ -639,8 +658,8 @@ translate t = liftF (Translate t id)
 </div>
 
 </section>
-<section id="slide-org7b87751">
-<h3 id="org7b87751">Business logic</h3>
+<section id="slide-orgb4fbe1d">
+<h3 id="orgb4fbe1d">Business logic</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >proceed :: Bot ()
@@ -656,8 +675,8 @@ proceed h = pullUpdates
 </div>
 
 </section>
-<section id="slide-org839e8f1">
-<h3 id="org839e8f1">Interpreter</h3>
+<section id="slide-org080ce9a">
+<h3 id="org080ce9a">Interpreter</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >botIO :: BotF a -&gt; IO a
@@ -668,8 +687,8 @@ botIO (Translate t ft) = ...
 </div>
 
 </section>
-<section id="slide-org7260dd5">
-<h3 id="org7260dd5">Interpreter helpers</h3>
+<section id="slide-org3647b15">
+<h3 id="org3647b15">Interpreter helpers</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >freeM :: (Functor f, Functor g)
@@ -698,8 +717,8 @@ interp phi = monad . freeM phi
 </div>
 
 </section>
-<section id="slide-orgcd306d1">
-<h3 id="orgcd306d1">Interpreter</h3>
+<section id="slide-org33e4c86">
+<h3 id="org33e4c86">Interpreter</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >botIO :: BotF a -&gt; IO a
@@ -723,13 +742,13 @@ interpBotIO = interp botIO
 </section>
 </section>
 <section>
-<section id="slide-org9ab0030">
-<h2 id="org9ab0030">Freer monads</h2>
-<div class="outline-text-2" id="text-org9ab0030">
+<section id="slide-org2251a51">
+<h2 id="org2251a51">Freer monads</h2>
+<div class="outline-text-2" id="text-org2251a51">
 </div>
 </section>
-<section id="slide-orga115e84">
-<h3 id="orga115e84">Free monad</h3>
+<section id="slide-org111f725">
+<h3 id="org111f725">Free monad</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Free f a
@@ -738,7 +757,7 @@ interpBotIO = interp botIO
 </code></pre>
 </div>
 
-<div id="org6d4617d" class="figure">
+<div id="org1feaf5b" class="figure">
 <p><img src="./images/ArrowDown.png" alt="ArrowDown.png" width="5%" style="margin: -15px;" />
 </p>
 </div>
@@ -750,8 +769,8 @@ interpBotIO = interp botIO
 </code></pre>
 </div>
 </section>
-<section id="slide-org6da4081">
-<h3 id="org6da4081">Simple trick</h3>
+<section id="slide-orgc2587b0">
+<h3 id="orgc2587b0">Simple trick</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Lan g a where
@@ -765,8 +784,8 @@ lan ga = Lan ga id
 </code></pre>
 </div>
 </section>
-<section id="slide-orgd591519">
-<h3 id="orgd591519">Substitution</h3>
+<section id="slide-org11a6ef1">
+<h3 id="org11a6ef1">Substitution</h3>
 <div class="org-src-container">
 
 <pre><code class="haskell" >data Free f a where
@@ -776,7 +795,7 @@ lan ga = Lan ga id
 </div>
 
 
-<div id="orge8c966d" class="figure">
+<div id="org810d1ab" class="figure">
 <p><img src="./images/ArrowDown.png" alt="ArrowDown.png" width="5%" style="margin: -15px;" />
 </p>
 </div>
@@ -789,7 +808,7 @@ lan ga = Lan ga id
 </div>
 
 
-<div id="org6fdd582" class="figure">
+<div id="org0d6c701" class="figure">
 <p><img src="./images/ArrowDown.png" alt="ArrowDown.png" width="5%" style="margin: -15px;" />
 </p>
 </div>
@@ -803,13 +822,13 @@ lan ga = Lan ga id
 </section>
 </section>
 <section>
-<section id="slide-orgaf785fb">
-<h2 id="orgaf785fb">Effects systems</h2>
+<section id="slide-org2386221">
+<h2 id="org2386221">Effects systems</h2>
 </section>
 </section>
 <section>
-<section id="slide-org92f2011">
-<h2 id="org92f2011">Questions?</h2>
+<section id="slide-orgcecc016">
+<h2 id="orgcecc016">Questions?</h2>
 </section>
 </section>
 </div>
@@ -833,8 +852,10 @@ fragmentInURL: false,
 hashOneBasedIndex: false,
 pdfSeparateFragments: true,
 overview: true,
+width: 1075,
+margin: 0.00,
 
-transition: 'convex',
+transition: 'slide',
 transitionSpeed: 'default',
 
 // Plugins with reveal.js 4.x

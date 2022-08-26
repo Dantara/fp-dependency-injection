@@ -1,31 +1,24 @@
 #+TITLE: Dependency injection
 #+SUBTITLE: in functional programming
 #+AUTHOR: Nikita Aleshchenko
+
 #+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
 #+REVEAL_THEME: styles/tinkoff.css
 #+REVEAL_PLUGINS: (highlight)
 #+REVEAL_HIGHLIGHT_CSS: styles/monokai.css
 #+REVEAL_EXTRA_CSS: styles/extra.css
-#+OPTIONS: num:nil toc:nil
+#+OPTIONS: num:nil toc:nil reveal_width:1075
+#+REVEAL_TRANS: slide
+#+REVEAL_MARGIN: 0
 
 #+REVEAL_TITLE_SLIDE: <img src="images/logo.svg" id="title-img">
 #+REVEAL_TITLE_SLIDE: <h2 class="title">%t</h2>
-#+REVEAL_TITLE_SLIDE: <h3 class="subtitle">%s<h3>
+#+REVEAL_TITLE_SLIDE: <h3 class="subtitle">%s</h3>
 #+REVEAL_TITLE_SLIDE: <h6 class="author">%a</h6>
 #+REVEAL_TITLE_SLIDE_BACKGROUND: rgb(255, 221, 45)
 #+REVEAL_TITLE_SLIDE_STATE: title-slide
 
-
-* Слайд обо мне
-# * Agenda
-# + Dependency injection
-# + Sample project
-# + Handle / Service pattern
-# + Tagless final
-# + Free monads
-# + Freer monads
-# + Effects systems
-# + Comparison
+#+INCLUDE: ./about.html export html
 
 * As software engeneers we want...
 
@@ -38,11 +31,9 @@ Dependency Injection is a software design technique in which the creation and bi
 + Separation of concerns
 
 ** Onion architecture
-# #+ATTR_HTML: :width 30%
-# [[./images/onion.png]]
-#+REVEAL_HTML: <span class="first-circle"></span>
-#+REVEAL_HTML: <span class="second-circle"></span>
-#+REVEAL_HTML: <span class="third-circle"></span>
+#+REVEAL_HTML: <span class="first-circle circle"></span>
+#+REVEAL_HTML: <span class="second-circle circle"></span>
+#+REVEAL_HTML: <span class="third-circle circle"></span>
 ** Three layers cake
 | Layer № | Purpose                |
 |---------+------------------------|
@@ -172,7 +163,6 @@ data Handle m = Handle
     }
 #+END_SRC
 
-
 ** Our project
 #+BEGIN_SRC haskell
 data Handle m = Handle
@@ -193,13 +183,13 @@ proceed h = pullUpdates h
 
 #+END_SRC
 
-** Pros & cons
-+ Pros:
+** Pros & Cons
+*** Pros:
   + Simple & intuitive
   + Performant
   + Local substituation of a handlers
 
-+ Cons:
+*** Cons:
   + Manual passing of handlers
   + Tightly bound to execution monad
 
