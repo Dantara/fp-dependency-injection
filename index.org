@@ -11,7 +11,7 @@
 #+OPTIONS: num:nil toc:nil reveal_width:1075
 #+REVEAL_TRANS: slide
 #+REVEAL_MARGIN: 0
-# #+REVEAL_EXTERNAL_PLUGINS: (RevealAnimate . "plugins/animate.js")
+# #+REVEAL_EXTERNAL_PLUGINS: (Animate . "./plugins/animate.js")
 
 #+REVEAL_TITLE_SLIDE: <img src="images/logo.svg" id="title-img">
 #+REVEAL_TITLE_SLIDE: <h2 class="title">%t</h2>
@@ -110,7 +110,7 @@ data Message = Msg
 pullUpdates :: IO [Message]
 pullUpdates = ...
 
-sendMessage :: IO ()
+sendMessage :: Message -> IO ()
 sendMessage = ...
 
 translate :: Text -> IO (Maybe Text)
@@ -194,7 +194,7 @@ proceed = pullUpdates
 pullUpdates :: IO [Message]
 pullUpdates = ...
 
-sendMessage :: IO ()
+sendMessage :: Message -> IO ()
 sendMessage = ...
 
 translate :: Text -> IO (Maybe Text)
@@ -210,7 +210,7 @@ translate = ...
 #+BEGIN_SRC haskell
 data Handle = Handle
   { pullUpdates :: IO [Message]
-  , sendMessage :: IO ()
+  , sendMessage :: Message -> IO ()
   , translate   :: Text -> IO (Maybe Text)
   }
 #+END_SRC
@@ -224,7 +224,7 @@ data Handle = Handle
 #+BEGIN_SRC haskell
 data Handle = Handle
   { pullUpdates :: IO [Message]
-  , sendMessage :: IO ()
+  , sendMessage :: Message -> IO ()
   , translate   :: Text -> IO (Maybe Text)
   }
 
@@ -249,7 +249,7 @@ proceed h = pullUpdates h
 #+BEGIN_SRC haskell
 data Handle = Handle
   { pullUpdates :: IO [Message]
-  , sendMessage :: IO ()
+  , sendMessage :: Message -> IO ()
   , translate   :: Text -> IO (Maybe Text)
   }
 #+END_SRC
@@ -263,7 +263,7 @@ data Handle = Handle
 #+BEGIN_SRC haskell
 data Handle m = Handle
   { pullUpdates :: m [Message]
-  , sendMessage :: m ()
+  , sendMessage :: Message -> m ()
   , translate   :: Text -> m (Maybe Text)
   }
 #+END_SRC
@@ -276,7 +276,7 @@ data Handle m = Handle
 #+BEGIN_SRC haskell
 data Handle m = Handle
   { pullUpdates :: m [Message]
-  , sendMessage :: m ()
+  , sendMessage :: Message -> m ()
   , translate   :: Text -> m (Maybe Text)
   }
 
@@ -292,17 +292,146 @@ proceed h = pullUpdates h
 
 #+END_SRC
 
-** Плюсы и минусы
-*** Плюсы:
+** Плюсы & минусы
+** Плюсы:
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+** Плюсы:
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :frag appear
   + Просто & Интуитивно;
+#+ATTR_REVEAL: :frag appear
   + Производительно;
+#+ATTR_REVEAL: :frag appear
   + Подмена хэндлеров в рантайме;
 
-*** Минусы:
+** Минусы:
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+** Минусы:
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
   + Ручное прокидывание хэндлеров;
   + Привязанность исполняющей монаде;
 
 * Tagless final
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+* Tagless final
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+Переход от структуры *Handle* к *Type class*'ам!
+
+** Type class
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+** Type class
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+ *Type class* ≈ *Interface*
+
+** Type class
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+ *Type class* ≈ *Interface*
+
+#+ATTR_REVEAL: :data_id type-class :code_attribs data-trim data-line-numbers='1-3|1|2|3'
+#+BEGIN_SRC haskell
+data Bool
+  = True
+  | False
+#+END_SRC
+
+** Type class
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+ *Type class* ≈ *Interface*
+
+#+ATTR_REVEAL: :data_id type-class :code_attribs data-trim data-line-numbers='1-6|5-6|5|6'
+#+BEGIN_SRC haskell
+data Bool
+  = True
+  | False
+
+class Show a where
+  show :: a -> String
+#+END_SRC
+
+** Type class
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+ *Type class* ≈ *Interface*
+
+#+ATTR_REVEAL: :data_id type-class :code_attribs data-trim data-line-numbers='1-10|8-10|8|9-10'
+#+BEGIN_SRC haskell
+data Bool
+  = True
+  | False
+
+class Show a where
+  show :: a -> String
+
+instance Show Bool where
+  show True  = "True"
+  show False = "False"
+#+END_SRC
+
+** Функции высшего порядка
+#+ATTR_REVEAL: :data_id tf
+#+BEGIN_SRC haskell
+map :: (a -> b) -> [a] -> [b]
+#+END_SRC
+
+** Типы высшего порядка
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id type-class2 :code_attribs
+#+BEGIN_SRC haskell
+class Functor f where
+  fmap :: (a -> b) -> f a -> f b
+#+END_SRC
+
+** Типы высшего порядка
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id type-class2 :code_attribs data-line-numbers='1-2|1'
+#+BEGIN_SRC haskell
+class Functor (f :: Type -> Type) where
+  fmap :: (a -> b) -> f a -> f b
+#+END_SRC
+
+** Типы высшего порядка
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id type-class2 :code_attribs data-line-numbers='1-6|4-6'
+#+BEGIN_SRC haskell
+class Functor f where
+  fmap :: (a -> b) -> f a -> f b
+
+instance Functor Maybe where
+  fmap f (Just a) = Just $ f a
+  fmap _ Nothing  = Nothing
+#+END_SRC
+
+** Tagless final
+
 ** Основная идея
 :PROPERTIES:
 :REVEAL_EXTRA_ATTR: data-auto-animate
@@ -316,7 +445,7 @@ proceed h = pullUpdates h
 #+BEGIN_SRC haskell
 data Handle m = Handle
   { pullUpdates :: m [Message]
-  , sendMessage :: m ()
+  , sendMessage :: Message -> m ()
   , translate   :: Text -> m (Maybe Text)
   }
 #+END_SRC
@@ -330,7 +459,7 @@ data Handle m = Handle
 #+BEGIN_SRC haskell
 class Monad m => MonadMessenger m where
   pullUpdates :: m [Message]
-  sendMessage :: m ()
+  sendMessage :: Message -> m ()
 
 class Monad m => MonadTranslator m where
   translate :: Text -> m (Maybe Text)
@@ -346,7 +475,7 @@ class Monad m => MonadTranslator m where
 #+BEGIN_SRC haskell
 class Monad m => MonadMessenger m where
   pullUpdates :: m [Message]
-  sendMessage :: m ()
+  sendMessage :: Message -> m ()
 
 class Monad m => MonadTranslator m where
   translate :: Text -> m (Maybe Text)
@@ -362,7 +491,7 @@ class Monad m => MonadTranslator m where
 class Monad m => MonadMessenger m where
   type Message m :: *
   pullUpdates :: m [Message]
-  sendMessage :: m ()
+  sendMessage :: Message -> m ()
 
 class Monad m => MonadTranslator m where
   translate :: Text -> m (Maybe Text)
@@ -377,7 +506,7 @@ class Monad m => MonadTranslator m where
 #+BEGIN_SRC haskell
 class Monad m => MonadMessenger m where
   pullUpdates :: m [Message]
-  sendMessage :: m ()
+  sendMessage :: Message -> m ()
 
 class Monad m => MonadTranslator m where
   translate :: Text -> m (Maybe Text)
@@ -393,11 +522,190 @@ proceed = pullUpdates
              (Msg ci))
 #+END_SRC
 
-** Тут будет ещё пачка слайдов
+** Интерпретация
+
+** Интерпретация
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id tf-interpret :code_attribs data-trim
+#+BEGIN_SRC haskell
+newtype AppM a = AppM { runAppM :: ReaderT SomeContext IO a }
+#+END_SRC
+
+** Интерпретация
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id tf-interpret :code_attribs data-trim data-line-numbers='1-2|2'
+#+BEGIN_SRC haskell
+newtype AppM a = AppM { runAppM :: ReaderT SomeContext IO a }
+  deriving newtype (Functor, Applicative, Monad, ...)
+#+END_SRC
+
+** Интерпретация
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id tf-interpret :code_attribs data-trim data-line-numbers='1-9|4-9'
+#+BEGIN_SRC haskell
+newtype AppM a = AppM { runAppM :: ReaderT SomeContext IO a }
+  deriving newtype (Functor, Applicative, Monad, ...)
+
+instance MonadMessenger AppM where
+  pullUpdates = ...
+  sendMessage = ...
+
+instance MonadTranslator AppM where
+  translate = ...
+#+END_SRC
+
+** Интерпретация
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id tf-interpret :code_attribs data-trim data-line-numbers='1-15|11-15|11|12|13|15|1,15|14'
+#+BEGIN_SRC haskell
+newtype AppM a = AppM { runAppM :: ReaderT SomeContext IO a }
+  deriving newtype (Functor, Applicative, Monad, ...)
+
+instance MonadMessenger AppM where
+  pullUpdates = ...
+  sendMessage = ...
+
+instance MonadTranslator AppM where
+  translate = ...
+
+interpret :: AppM a -> IO a
+interpret app = do
+  ctx <- retrieveContext
+  flip runReaderT ctx
+    $ runAppM app
+#+END_SRC
+
+** Плюсы & Минусы
+** Плюсы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+** Плюсы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :frag appear
++ Производительность;
+#+ATTR_REVEAL: :frag appear
++ "Автоматическая" подстановка реализации;
+#+ATTR_REVEAL: :frag appear
++ Абстракции меньше протекают;
+** Минусы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+** Минусы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
++ Часть абстракций протекаeт:
+** Минусы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
++ Часть абстракций протекаeт:
+#+ATTR_REVEAL: :data_id tf-interpret :code_attribs data-trim
+#+BEGIN_SRC haskell
+class MonadTranslator m
+#+END_SRC
+** Минусы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
++ Часть абстракций протекаeт:
+#+ATTR_REVEAL: :data_id tf-interpret :code_attribs data-trim
+#+BEGIN_SRC haskell
+class MonadDB m => MonadTranslator m
+#+END_SRC
+** Минусы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
++ Нет возможности добавления нового эффекта ниже по стэку:
+** Минусы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
++ Нет возможности добавления нового эффекта ниже по стэку:
+#+ATTR_REVEAL: :data_id tf-interpret :code_attribs data-trim data-line-numbers='1-9|11-16|13'
+#+BEGIN_SRC haskell
+newtype AppM a = AppM { runAppM :: ReaderT SomeContext IO a }
+  deriving newtype (Functor, Applicative, Monad, ...)
+
+instance MonadMessenger AppM where
+  pullUpdates = ...
+  sendMessage = ...
+
+instance MonadTranslator AppM where
+  translate = ...
+
+instance MonadMessenger m => MonadMessenger (ReaderT r m) where
+  pullUpdates     = ReaderT $ \_ -> pullUpdates
+  sendMessage msg = ReaderT $ \_ -> sendMessage msg
+
+instance MonadTranslator m => MonadTranslator (ReaderT r m) where
+  translate t = ReaderT $ \_ -> translate t
+#+END_SRC
+** Минусы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
++ Нет возможности "реинтрепретации" эффекта:
+#+ATTR_REVEAL: :data_id tf-interpret :code_attribs data-trim data-line-numbers='1-9|11-19'
+#+BEGIN_SRC haskell
+newtype AppM a = AppM { runAppM :: ReaderT SomeContext IO a }
+  deriving newtype (Functor, Applicative, Monad, ...)
+
+instance MonadMessenger AppM where
+  pullUpdates = ...
+  sendMessage = ...
+
+instance MonadTranslator AppM where
+  translate = ...
+
+newtype AppM2 a = AppM2 { runAppM2 :: ReaderT SomeContext IO a }
+  deriving newtype (Functor, Applicative, Monad, ...)
+
+instance MonadMessenger AppM2 where
+  pullUpdates = ...
+  sendMessage = ...
+
+instance MonadTranslator AppM2 where
+  translate = ...
+#+END_SRC
+
 
 * Free monads
 ** Интерпритируемые языки
-Тут будут картинки
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+** Интерпритируемые языки
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+# #+ATTR_HTML: :width 40% :height 40% :style position: absolute left: 10vw;
+# [[./images/ruby.png]]
+
+#+ATTR_REVEAL: :frag appear
++ Код;
+#+ATTR_REVEAL: :frag appear
++ AST (Abtract syntax tree);
+#+ATTR_REVEAL: :frag appear
++ Интрепретатор;
 
 ** Большая троица
 :PROPERTIES:
@@ -552,7 +860,6 @@ type Bot = Free BotF
 liftF :: Functor f => f a -> Free f a
 liftF command = Free (fmap Pure command)
 #+END_SRC
-
 
 ** Helper functions
 #+BEGIN_SRC haskell
