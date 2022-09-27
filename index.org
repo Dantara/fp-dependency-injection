@@ -39,6 +39,7 @@
 #+ATTR_REVEAL: :frag appear
 + Тестируемый код;
 
+
 * Dependency injection
 :PROPERTIES:
 :REVEAL_EXTRA_ATTR: data-auto-animate
@@ -92,6 +93,9 @@ Dependency Injection (Внедрение зависимостей) - это ме
 |      2 | DSL для бизнес логики |
 |      1 | Интерпретатор         |
 
+
+
+
 * Тестовый проект
 ** Бот переводчик
 Получает сообщение от пользователя через long polling, переводит с английского на русский, отправляет сообщение обратно пользователю.
@@ -130,6 +134,7 @@ proceed = pullUpdates
 ** Проблемы
 + Весь код в IO; 🚀
 + Не тестируемый код;
+
 
 * Handle / Service pattern
 ** Функциональное программирование
@@ -318,6 +323,7 @@ proceed h = pullUpdates h
 :END:
   + Ручное прокидывание хэндлеров;
   + Привязанность исполняющей монаде;
+
 
 * Tagless final
 :PROPERTIES:
@@ -671,36 +677,173 @@ fmap :: (a -> b) -> f a -> f b
 (>>=) m f = join (fmap f m)
 #+END_SRC
 
-** Key Idea
+** Алгебра бизнес логики
+#+BEGIN_SRC haskell
+data Bot
+  = PullUpdates [Message]
+  | SendMessage Message
+  | Translate Text (Maybe Text)
+#+END_SRC
+
+** Алгебра бизнес логики
+#+BEGIN_SRC haskell
+data Bot
+  = PullUpdate Message
+  | SendMessage Message
+#+END_SRC
+
+** Алгебра бизнес логики
+#+BEGIN_SRC haskell
+data Bot next
+  = PullUpdate Message next
+  | SendMessage Message next
+#+END_SRC
+
+** Алгебра бизнес логики
+#+BEGIN_SRC haskell
+data Bot a
+  = PullUpdate Message (Bot a)
+  | SendMessage Message (Bot a)
+#+END_SRC
+
+** Алгебра бизнес логики
+#+BEGIN_SRC haskell
+data Bot a
+  = PullUpdate (Message -> (Bot a))
+  | SendMessage Message (Bot a)
+#+END_SRC
+
+** Алгебра бизнес логики
+#+BEGIN_SRC haskell
+data Bot a
+  = PullUpdate (Message -> (Bot a))
+  | SendMessage Message (Bot a)
+  | Done a
+#+END_SRC
+
+** Эхо бот
+#+BEGIN_SRC haskell
+data Bot a
+  = PullUpdate (Message -> (Bot a))
+  | SendMessage Message (Bot a)
+  | Done a
+
+echo :: Bot ()
+echo = PullUpdate $ \msg ->
+       SendMessage msg
+     $ Done ()
+#+END_SRC
+
+** Monad instance
+#+BEGIN_SRC haskell
+data Bot a
+  = SendMessage Message (Bot a)
+  | PullUpdate (Message -> (Bot a))
+  | Done a
+
+class Monad m where
+  pure  :: m a
+  (>>=) :: m a -> (a -> m b) -> m b
+
+instance Monad Bot where
+  pure = Done
+  SendMessage msg k >>= f = SendMessage msg $ k >>= f
+  PullUpdate      k >>= f = PullUpdate $ \msg -> k msg >>= f
+#+END_SRC
+
+** Эхо бот
+#+BEGIN_SRC haskell
+data Bot a
+  = PullUpdate (Message -> (Bot a))
+  | SendMessage Message (Bot a)
+  | Done a
+
+echo :: Bot ()
+echo = do
+  msg <- PullUpdate Done
+  SendMessage msg $ Done ()
+#+END_SRC
+
+** Интерпретация
+#+BEGIN_SRC haskell
+data Bot a
+  = Done a
+  | SendMessage Message (Bot a)
+  | PullUpdate (Message -> (Bot a))
+
+interpretBotIO :: Bot a -> IO a
+
+interpretBotIO (Done a) = pure a
+
+interpretBotIO (SendMessage msg m) = do
+  sendMessageIO msg
+  interpretBotIO m
+
+interpretBotIO (PullUpdate f) = do
+  msg <- pullMessageIO
+  interpretBotIO $ f msg
+#+END_SRC
+
+** Абстрагирование
+#+BEGIN_SRC haskell
+data Bot a
+  = SendMessage Message (Bot a)
+  | PullUpdate (Message -> (Bot a))
+  | Done a
+#+END_SRC
+
+** Абстрагирование
+#+BEGIN_SRC haskell
+data Bot a
+  = SendMessage Message (Bot a)
+  | PullUpdate (Message -> (Bot a))
+  | Translate Text ((Maybe Text) -> Bot a)
+  | Done a
+#+END_SRC
+
+** Абстрагирование
+#+BEGIN_SRC haskell
+data BotF next
+  = SendMessage Message next
+  | PullUpdate (Message -> next)
+  | Translate Text ((Maybe Text) -> next)
+
+data Free f a
+  = Pure a
+  | Impure (f (Free f a))
+
+type Bot a = Free BotF a
+#+END_SRC
+
+** Основная идея
 #+BEGIN_SRC haskell
 data Free f a
   = Pure a
-  | Free (f (Free f a))
+  | Impure (f (Free f a))
 #+END_SRC
 
-** Key Idea
+** Основная идея
 #+BEGIN_SRC haskell
 data Free f a
   = Pure a
-  | Free (f (Free f a))
-#+END_SRC
+  | Impure (f (Free f a))
 
-#+BEGIN_SRC haskell
-Pure :: a -> m a        -- looks like pure
-Free :: f (m a) -> m a  -- looks like join
+Pure   :: a -> Free f a             -- looks like pure
+Impure :: f (Free f a) -> Free f a  -- looks like join
+
+pure :: Monad m => a -> m a
+join :: Monad m => m (m a) -> m a
 #+END_SRC
 
 ** Functor instance
 #+BEGIN_SRC haskell
 data Free f a
   = Pure a
-  | Free (f (Free f a))
-#+END_SRC
+  | Impure (f (Free f a))
 
-#+BEGIN_SRC haskell
 instance Functor f => Functor (Free f) where
-  fmap g (Free fx) = Free (fmap g <$> fx)
-  fmap g (Pure x)  = Pure (g x)
+  fmap g (Pure x)    = Pure (g x)
+  fmap g (Impure fx) = Impure (fmap g <$> fx)
 #+END_SRC
 
 ** Monad instance
@@ -708,40 +851,14 @@ instance Functor f => Functor (Free f) where
 data Free f a
   = Pure a
   | Free (f (Free f a))
-#+END_SRC
 
-#+BEGIN_SRC haskell
 instance Functor f => Monad (Free f) where
-  return = Pure
-  Pure x  >>= g  =  g x
-  Free fx >>= g  =  Free ((>>= g) <$> fx)
+  pure = Pure
+  Pure x    >>= g = g x
+  Impure fx >>= g = Impure ((>>= g) <$> fx)
 #+END_SRC
 
-** Business logic functor
-#+BEGIN_SRC haskell
-data BotF
-  = PullUpdates [Message]
-  | SendMessage Message
-  | Translate Text (Maybe Text)
-#+END_SRC
-
-** Business logic functor
-#+BEGIN_SRC haskell
-data BotF a
-  = PullUpdates [Message] a
-  | SendMessage Message a
-  | Translate Text (Maybe Text) a
-#+END_SRC
-
-** Business logic functor
-#+BEGIN_SRC haskell
-data BotF a
-  = PullUpdates ([Message] -> a)
-  | SendMessage Message a
-  | Translate Text ((Maybe Text) -> a)
-#+END_SRC
-
-** Business logic functor
+** Алгебра бизнес логики
 #+BEGIN_SRC haskell
 data BotF a
   = PullUpdates ([Message] -> a)
@@ -758,15 +875,13 @@ liftF :: Functor f => f a -> Free f a
 liftF command = Free (fmap Pure command)
 #+END_SRC
 
-** Helper functions
+** Хелперы
 #+BEGIN_SRC haskell
 data BotF a
   = PullUpdates ([Message] -> a)
   | SendMessage Message a
   | Translate Text ((Maybe Text) -> a)
-#+END_SRC
 
-#+BEGIN_SRC haskell
 pullUpdates :: Bot [Message]
 pullUpdates = liftF (PullUpdates id)
 
@@ -777,10 +892,10 @@ translate :: Text -> Bot (Maybe Text)
 translate t = liftF (Translate t id)
 #+END_SRC
 
-** Business logic
+** Бизнес логика
 #+BEGIN_SRC haskell
 proceed :: Bot ()
-proceed h = pullUpdates
+proceed = pullUpdates
   >>= traverse_ (translateMsg >>= sendMessage)
   where
     translateMsg :: Message -> Bot Message
@@ -790,49 +905,229 @@ proceed h = pullUpdates
              (Msg ci))
 #+END_SRC
 
-** Interpreter
+** Интерпретация
 #+BEGIN_SRC haskell
+data BotF a
+  = PullUpdates ([Message] -> a)
+  | SendMessage Message a
+  | Translate Text ((Maybe Text) -> a)
+
 botIO :: BotF a -> IO a
 botIO (PullUpdates u) = ...
 botIO (SendMessage m a) = ...
 botIO (Translate t ft) = ...
+
+type Bot = Free BotF
+
+interpretBotIO :: Bot a -> IO a
+interpretBotIO = ???
 #+END_SRC
 
-** Interpreter helpers
+** Хелперы
 #+BEGIN_SRC haskell
-freeM :: (Functor f, Functor g)
-      => (f a -> g a) -> Free f a -> Free g a
-freeM phi (Pure x) = Pure x
-freeM phi (Free fx) = Free $ phi (freeM phi <$> fx)
-#+END_SRC
+freeM
+  :: (Functor f, Functor g)
+  => (f a -> g a)
+  -> Free f a
+  -> Free g a
+freeM phi (Pure x)    = Pure x
+freeM phi (Impure fx) = Impure $ phi (freeM phi <$> fx)
 
-#+BEGIN_SRC haskell
 monad :: Monad m => Free m a -> m a
 monad (Pure x) = pure x
 monad (Free mfx) = do
   fx <- mfx
   monad fx
+
+interpret
+  :: (Functor f, Monad m)
+  => (f a -> m a)
+  -> Free f a
+  -> m a
+interpret phi = monad . freeM phi
 #+END_SRC
 
-#+BEGIN_SRC haskell
-interp :: (Functor f, Monad m)
-       => (f a -> m a) -> Free f a -> m a
-interp phi = monad . freeM phi
-#+END_SRC
-
-** Interpreter
+** Интерпретация
 #+BEGIN_SRC haskell
 botIO :: BotF a -> IO a
+
+interpret
+  :: (Functor f, Monad m)
+  => (f a -> m a)
+  -> Free f a
+  -> m a
+
+interpetBotIO :: Bot a -> IO a
+interpetBotIO = interpret botIO
 #+END_SRC
 
+** Композиция алгебр
 #+BEGIN_SRC haskell
-interp :: (Functor f, Monad m)
-       => (f a -> m a) -> Free f a -> m a
+data BotF a
+  = PullUpdates ([Message] -> a)
+  | SendMessage Message a
+  | Translate Text ((Maybe Text) -> a)
+
+type Bot = Free BotF
 #+END_SRC
 
+** Композиция алгебр
 #+BEGIN_SRC haskell
-interpBotIO :: Bot a -> IO a
-interpBotIO = interp botIO
+data MessengerF a
+  = PullUpdates ([Message] -> a)
+  | SendMessage Message a
+
+data TranslatorF a
+  = Translate Text ((Maybe Text) -> a)
+#+END_SRC
+
+** Композиция алгебр
+#+BEGIN_SRC haskell
+data MessengerF a
+  = PullUpdates ([Message] -> a)
+  | SendMessage Message a
+
+data TranslatorF a
+  = Translate Text ((Maybe Text) -> a)
+#+END_SRC
+
+** Тип суммы
+#+BEGIN_SRC haskell
+data Sum f g a
+  = L (f a)
+  | R (g a)
+
+instance (Functor f, Functor g) => Functor (Sum f g)
+#+END_SRC
+
+** Композиция алгебр
+#+BEGIN_SRC haskell
+data MessengerF a
+  = PullUpdates ([Message] -> a)
+  | SendMessage Message a
+  deriving (Functor)
+
+data TranslatorF a
+  = Translate Text ((Maybe Text) -> a)
+  deriving (Functor)
+
+type BotF = Sum MessengerF TranslatorF
+#+END_SRC
+
+** Хелперы
+#+BEGIN_SRC haskell
+pullUpdates :: Bot [Message]
+pullUpdates = liftF $ PullUpdates id
+
+sendMessage :: Message -> Bot ()
+sendMessage msg = liftF $ SendMessage msg ()
+
+translate :: Text -> Bot (Maybe Text)
+translate t = liftF $ Translate t id
+#+END_SRC
+
+** Хелперы
+#+BEGIN_SRC haskell
+pullUpdates :: Bot [Message]
+pullUpdates = liftF $ L $ PullUpdates id
+
+sendMessage :: Message -> Bot ()
+sendMessage msg = liftF $ L $ SendMessage msg ()
+
+translate :: Text -> Bot (Maybe Text)
+translate t = liftF $ R $ Translate t id
+#+END_SRC
+
+** Тип суммы
+#+BEGIN_SRC haskell
+data Sum f g a
+  = L (f a)
+  | R (g a)
+#+END_SRC
+
+** Варианты расширения
++ Постороение дерева (Hierarchical Free Monads);
++ Расширяемый спиcок эффектов (Extensible effects);
+
+** Hierarchical Free Monads
+#+BEGIN_SRC haskell
+data MessengerF next
+  = PullUpdates ([Message] -> next)
+  | SendMessage Message next
+
+data TranslatorF a
+  = Translate Text ((Maybe Text) -> next)
+#+END_SRC
+
+** Hierarchical Free Monads
+#+BEGIN_SRC haskell
+data MessengerF next
+  = PullUpdates ([Message] -> next)
+  | SendMessage Message next
+
+data TranslatorF next
+  = Translate Text ((Maybe Text) -> next)
+
+data BotF a
+  = EvalMessenger  (MessengerF a)
+  | EvalTranslator (TranslatorF a)
+#+END_SRC
+
+** Hierarchical Free Monads
+#+BEGIN_SRC haskell
+data BotF a
+  = EvalMessenger  (MessengerF a)
+  | EvalTranslator (TranslatorF a)
+  | EvalLogger     (LoggerF a)
+#+END_SRC
+
+** Hierarchical Free Monads
+#+BEGIN_SRC haskell
+data BotF a
+  = EvalMessenger  (MessengerF a)
+  | EvalTranslator (TranslatorF a)
+  | EvalLogger     (LoggerF a)
+
+botIO :: BotF a -> IO a
+botIO (EvalMessenger m)  = messengerIO m
+botIO (EvalTranslator m) = translatorIO m
+botIO (EvalLogger m)     = evalLoggerIO m
+#+END_SRC
+
+
+** Плюсы & Минусы
+
+** Плюсы:
++ Высокая выразительность;
++ Чистота бизнес логики;
++ Жеское разделение слоев (при HFM);
+
+** Минусы:
++ Производительность (при initial кодировке);
++ Boilerplate;
++ Эффекты высшего порядка;
+
+** Эффекты высшего порядка
+
+** Функции высшего порядка
+#+BEGIN_SRC haskell
+map :: (a -> b) -> [a] -> [b]
+
+filter :: (a -> Bool) -> [a] -> [a]
+#+END_SRC
+
+** Эффекты высшего порядка
+#+BEGIN_SRC haskell
+class MonadReader r m | m -> r where
+  ask   :: m r
+  local :: (r -> r) -> m a -> ma
+#+END_SRC
+
+** Эффекты высшего порядка
+#+BEGIN_SRC haskell
+class MonadError e m | m -> e where
+  throwError :: e -> m a
+  catchError :: m a -> (e -> m a) -> m a
 #+END_SRC
 
 * Freer monads
@@ -977,28 +1272,152 @@ class Monad m where
   (>>=) :: m a -> (a -> m b) -> m b
 #+END_SRC
 
-** Простой трюк
+
+** Алгебра бизнес логики
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
+#+BEGIN_SRC haskell
+data Bot a where
+  PullUpdates :: Bot [Message]
+  SendMessage :: Message -> Bot ()
+  Translate   :: Text -> Bot (Maybe Text)
+
+type BotM = FFree Bot
+#+END_SRC
+
+** Lift helper
 #+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 lan :: g a -> Lan g a
 lan ga = Lan ga id
 
-etaF :: g a -> FFree g a
-etaF fa = FImpure fa FPure
+send :: g a -> FFree g a
+send fa = FImpure fa FPure
 #+END_SRC
 
-** Бизнес логика
-#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
+** Хелперы
 #+BEGIN_SRC haskell
-data Bot f a where
+data Bot a where
   PullUpdates :: Bot [Message]
   SendMessage :: Message -> Bot ()
   Translate   :: Text -> Bot (Maybe Text)
 
-type BotM f = FFree (Bot f)
+type BotM = FFree Bot
+
+send :: g a -> FFree g a
+send fa = FImpure fa FPure
+
+pullUpdates :: BotM [Message]
+pullUpdates = send PullUpdates
+
+sendMessage :: Message -> BotM [Message]
+sendMessage = send . SendMessage
+
+translate :: Text -> BotM (Maybe Text)
+translate :: send . Translate
+#+END_SRC
+
+** Бизнес логика
+#+BEGIN_SRC haskell
+proceed :: Bot ()
+proceed = pullUpdates
+  >>= traverse_ (translateMsg >>= sendMessage)
+  where
+    translateMsg :: Message -> Bot Message
+    translateMsg (Msg ci t) = translate t
+      <&> (maybe
+             (Msg ci "Cannot translate text")
+             (Msg ci))
+#+END_SRC
+
+** Интерпретация
+#+BEGIN_SRC haskell
+data Bot a where
+  PullUpdates :: Bot [Message]
+  SendMessage :: Message -> Bot ()
+  Translate   :: Text -> Bot (Maybe Text)
+
+botIO :: Bot a -> IO a
+botIO PullUpdates       = ...
+botIO (SendMessage msg) = ...
+botIO (Translate t)     = ...
+#+END_SRC
+
+** Интерпретация
+#+BEGIN_SRC haskell
+data FFree g a where
+  FPure   :: a -> FFree g a
+  FImpure :: g x -> (x -> FFree g a) -> FFree g a
+
+runFree
+  :: Monad m
+  => (f a -> m a)
+  -> FFree f a
+  -> m a
+runFree phi m = loop m
+  where
+    loop (FPure x)     = pure x
+    loop (FImpure u q) = phi u $ loop q
+#+END_SRC
+
+** Интерпретация
+#+BEGIN_SRC haskell
+runFree
+  :: Monad m
+  => (f a -> m a)
+  -> FFree f a
+  -> m a
+
+botIO :: Bot a -> IO a
+
+interpretBotIO :: FFree Bot a -> IO a
+interpretBotIO = runFree botIO
+#+END_SRC
+
+** Плюсы
+** Плюсы:
++ Производительность;
++ Лаконичность;
+
+** Лаконичность
+#+BEGIN_SRC haskell
+data BotF a
+  = PullUpdates ([Message] -> a)
+  | SendMessage Message a
+  | Translate Text ((Maybe Text) -> a)
+#+END_SRC
+
+#+BEGIN_SRC haskell
+data Bot a where
+  PullUpdates :: Bot [Message]
+  SendMessage :: Message -> Bot ()
+  Translate   :: Text -> Bot (Maybe Text)
+#+END_SRC
+
+** Лаконичность
+#+BEGIN_SRC haskell
+pullUpdates :: Bot [Message]
+pullUpdates = liftF $ PullUpdates id
+
+sendMessage :: Message -> Bot ()
+sendMessage msg = liftF $ SendMessage msg ()
+
+translate :: Text -> Bot (Maybe Text)
+translate t = liftF $ Translate t id
+#+END_SRC
+
+#+BEGIN_SRC haskell
+pullUpdates :: BotM [Message]
+pullUpdates = send PullUpdates
+
+sendMessage :: Message -> BotM [Message]
+sendMessage = send . SendMessage
+
+translate :: Text -> BotM (Maybe Text)
+translate :: send . Translate
 #+END_SRC
 
 * Effects systems
+
 * Questions?
 
 * Appendix
