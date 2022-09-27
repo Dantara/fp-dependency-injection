@@ -591,11 +591,11 @@ instance MonadTranslator AppM2 where
 
 
 * Free monads
-** Интерпритируемые языки
+** Интерпретируемые языки
 :PROPERTIES:
 :REVEAL_EXTRA_ATTR: data-auto-animate
 :END:
-** Интерпритируемые языки
+** Интерпретируемые языки
 :PROPERTIES:
 :REVEAL_EXTRA_ATTR: data-auto-animate
 :END:
@@ -1192,7 +1192,7 @@ data SomeType a where
 #+BEGIN_SRC haskell
 data Free f a
   = Pure a
-  | Free (f (Free f a))
+  | Impure (f (Free f a))
 #+END_SRC
 ** Free monad
 :PROPERTIES:
@@ -1417,7 +1417,257 @@ translate :: send . Translate
 #+END_SRC
 
 * Effects systems
+** Freer monad
+#+BEGIN_SRC haskell
+data FFree g a where
+  FPure   :: a -> FFree g a
+  FImpure :: g x -> (x -> FFree g a) -> FFree g a
+#+END_SRC
 
+** Алгебра бизнес логики
+#+BEGIN_SRC haskell
+data Bot a where
+  PullUpdates :: Bot [Message]
+  SendMessage :: Message -> Bot ()
+  Translate   :: Text -> Bot (Maybe Text)
+#+END_SRC
+
+** Алгебра бизнес логики
+#+BEGIN_SRC haskell
+data Messenger a where
+  PullUpdates :: Messenger [Message]
+  SendMessage :: Message -> Messenger ()
+
+data Translator a where
+  Translate   :: Text -> Translator (Maybe Text)
+#+END_SRC
+
+** Тип суммы
+#+BEGIN_SRC haskell
+data Sum f g a
+  = L (f a)
+  | R (g a)
+#+END_SRC
+
+** Варианты расширения
++ Постороение дерева (Hierarchical Free Monads);
++ Расширяемый спиcок эффектов (Extensible effects);
+
+** Union type
+#+BEGIN_SRC haskell
+data Union (sig :: [Type -> Type]) r
+#+END_SRC
+
+** Union type
+#+BEGIN_SRC haskell
+data Union (sig :: [Type -> Type]) r
+
+Union '[Messenger, Translator]
+#+END_SRC
+
+** Member class
+#+BEGIN_SRC haskell
+data Union (sig :: [Type -> Type]) r
+
+class Member f r where
+  inj :: f a -> Union r a
+  prj :: Union r a -> Maybe (f a)
+
+decomp :: Union (f ': r) a -> Either (Union r a) (f a)
+#+END_SRC
+
+** Freer monad
+#+BEGIN_SRC haskell
+data FFree f a where
+  FPure   :: a -> FFree f a
+  FImpure :: f x -> (x -> FFree f a) -> FFree f a
+#+END_SRC
+
+** Freer monad
+#+BEGIN_SRC haskell
+data FFree f a where
+  FPure   :: a -> FFree f a
+  FImpure :: f x -> (x -> FFree f a) -> FFree f a
+
+
+data FEFree r a where
+  FEPure   :: a -> FEFree r a
+  FEImpure :: Union r x -> (x -> FEFree f a) -> FEFree r a
+#+END_SRC
+
+** Lift helper
+#+BEGIN_SRC haskell
+data Union (sig :: [Type -> Type]) r
+
+class Member f r where
+  inj :: f a -> Union r a
+  prj :: Union r a -> Maybe (f a)
+
+data Eff r a where
+  Pure   :: a -> Eff r a
+  Impure :: Union r x -> (x -> Eff r a) -> Eff r a
+
+send :: Member f r => f a -> Eff r a
+send fa = Impure (inj fa) Pure
+#+END_SRC
+
+** Хeлперы
+#+BEGIN_SRC haskell
+send :: Member f r => f a -> Eff r a
+send fa = Impure (inj fa) Pure
+
+pullUpdates
+  :: Member Messager r
+  => Eff r [Message]
+pullUpdates = send PullUpdates
+
+sendMessage
+  :: Member Messager r
+  => Message
+  -> Eff r [Message]
+sendMessage = send . SendMessage
+
+translate
+  :: Member Transaltor r
+  => Text
+  -> Eff r (Maybe Text)
+translate = send . Translate
+#+END_SRC
+
+** Бизнес логика
+#+BEGIN_SRC haskell
+proceed :: (Member Messenger r, Member Translator r) => Eff r ()
+proceed = pullUpdates
+  >>= traverse_ (translateMsg >>= sendMessage)
+  where
+    translateMsg :: Member Messenger r => Message -> Eff r Message
+    translateMsg (Msg ci t) = translate t
+      <&> (maybe
+             (Msg ci "Cannot translate text")
+             (Msg ci))
+#+END_SRC
+
+** Сравнение с TF
+#+BEGIN_SRC haskell
+proceed :: (Member Messenger r, Member Translator r) => Eff r ()
+#+END_SRC
+
+#+BEGIN_SRC haskell
+proceed :: (MonadMessenger m, MonadTranslator m) => m ()
+#+END_SRC
+
+** Бизнес логика
+#+BEGIN_SRC haskell
+proceed :: (Member Messenger r, Member Translator r) => Eff r ()
+proceed = pullUpdates
+  >>= traverse_ (translateMsg >=> sendMessage)
+  where
+    translateMsg :: Member Messenger r => Message -> Eff r Message
+    translateMsg (Msg ci t) = translate t
+      <&> (maybe
+             (Msg ci "Cannot translate text")
+             (Msg ci))
+#+END_SRC
+
+** Бизнес логика
+#+BEGIN_SRC haskell
+proceed :: (Member Messenger r, Member Translator r) => Eff r ()
+proceed = do
+  updates <- pullUpdates
+  traverse_ (translateMsg >=> sendMessage) updates
+  where
+    translateMsg :: Member Messenger r => Message -> Eff r Message
+    translateMsg (Msg ci t) = translate t
+      <&> (maybe
+             (Msg ci "Cannot translate text")
+             (Msg ci))
+#+END_SRC
+
+** Бизнес логика
+#+BEGIN_SRC haskell
+proceed :: (Member Messenger r, Member Translator r) => Eff r ()
+proceed = do
+  updates <- pullUpdates
+  runReader ctx
+   $ traverse_ (translateMsg >=> sendMessage) updates
+  where
+    translateMsg
+      :: ( Member Messenger r
+         , Member (Reader ctx) r )
+      => Message -> Eff r Message
+    translateMsg (Msg ci t) = translate t
+      <&> (maybe
+             (Msg ci "Cannot translate text")
+             (Msg ci))
+#+END_SRC
+
+** Бизнес логика
+#+BEGIN_SRC haskell
+proceed :: (Member Messenger r, Member Translator r) => Eff r ()
+proceed = do
+  updates <- pullUpdates
+  runReader ctx
+   $ runRandom
+   $ traverse_ (translateMsg >=> sendMessage) updates
+  where
+    translateMsg
+      :: ( Member Messenger r
+         , Member Random r
+         , Member (Reader ctx) r )
+      => Message -> Eff r Message
+    translateMsg (Msg ci t) = translate t
+      <&> (maybe
+             (Msg ci "Cannot translate text")
+             (Msg ci))
+#+END_SRC
+
+** Интерпретация
+#+BEGIN_SRC haskell
+decomp :: Union (f ': r) a -> Either (Union r a) (f a)
+
+interpret
+  :: (eff a -> Eff effs)
+  -> Eff (eff ': effs)
+  -> Eff effs
+interpret _   (Pure a)     = Pure a
+interpret phi (Impure u f) = case decomp u of
+  Right fa -> phi fa
+  Left u'  -> Impure u' $ \x -> interpret phi (f x)
+#+END_SRC
+
+** Интерпретация
+#+BEGIN_SRC haskell
+reinterpret
+  :: (f a -> Eff (g ': effs))
+  -> Eff (f ': effs)
+  -> Eff (g ': effs)
+
+runM :: Monad m => Eff '[m] a -> m a
+
+run :: Eff '[] a -> a
+#+END_SRC
+
+** Effects system libraries
++ freer-simple
++ polysemy
++ fused-effects
++ ...
+
+** Плюсы & минусы
+** Плюсы
+** Плюсы
++ Высокая выразительноть:
+  + Реинтерпретация эффектов;
+  + Добавление эффектов на лету;
+  + Простая подмена интерпретаторов;
+  + Поддержка эффектов высшего порядка;
++ Производительность;
+** Минусы
+** Минусы
++ Производительность;
++ Высокий порог входа;
+
+* Спасибо за внимание!
 * Questions?
 
 * Appendix
