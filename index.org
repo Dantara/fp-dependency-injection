@@ -1058,7 +1058,7 @@ instance Functor f => Functor (Free f) where
 #+BEGIN_SRC haskell
 data Free f a
   = Pure a
-  | Free (f (Free f a))
+  | Impure (f (Free f a))
 
 instance Functor f => Monad (Free f) where
   pure = Pure
@@ -1117,7 +1117,7 @@ translate t = liftF (Translate t id)
 #+BEGIN_SRC haskell
 proceed :: Bot ()
 proceed = pullUpdates
-  >>= traverse_ (translateMsg >>= sendMessage)
+  >>= traverse_ (translateMsg >=> sendMessage)
   where
     translateMsg :: Message -> Bot Message
     translateMsg (Msg ci t) = translate t
@@ -2049,7 +2049,7 @@ proceed = do
 :PROPERTIES:
 :REVEAL_EXTRA_ATTR: data-auto-animate
 :END:
-#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=2-5
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=2-5,8-10
 #+BEGIN_SRC haskell
 proceed :: (Member Messenger r, Member Translator r) => Eff r ()
 proceed = do
@@ -2071,7 +2071,7 @@ proceed = do
 :PROPERTIES:
 :REVEAL_EXTRA_ATTR: data-auto-animate
 :END:
-#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=2-6
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=2-6,9-12
 #+BEGIN_SRC haskell
 proceed :: (Member Messenger r, Member Translator r) => Eff r ()
 proceed = do
@@ -2092,7 +2092,7 @@ proceed = do
 #+END_SRC
 
 ** Интерпретация
-#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=2-6
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 decomp :: Union (f ': r) a -> Either (Union r a) (f a)
 
@@ -2107,7 +2107,7 @@ interpret phi (Impure u f) = case decomp u of
 #+END_SRC
 
 ** Интерпретация
-#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=2-6
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=1-8|1-4|6|8
 #+BEGIN_SRC haskell
 reinterpret
   :: (f a -> Eff (g ': effs))
