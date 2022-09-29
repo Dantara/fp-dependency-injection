@@ -168,7 +168,7 @@ ul {
         background-color: rgba(0, 0, 0, 0);
         transform: translate(-50%, -50%);
         position: absolute;
-        top: 300%;
+        top: 300% !important;
         left: 50%;
         pointer-events: none;
     }
@@ -200,4 +200,8 @@ ul {
 
 p {
         text-align: left;
+    }
+
+#slides-qr {
+        height: 50vh;
     }

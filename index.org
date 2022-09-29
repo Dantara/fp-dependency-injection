@@ -3,12 +3,15 @@
 #+AUTHOR: Nikita Aleshchenko
 
 #+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+#+REVEAL_REVEAL_JS_VERSION: 4
 #+REVEAL_THEME: styles/tinkoff.css
 #+REVEAL_PLUGINS: (highlight)
 #+REVEAL_HIGHLIGHT_CSS: styles/monokai.css
 #+REVEAL_EXTRA_CSS: styles/extra.css
 #+REVEAL_EXTRA_CSS: https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css
-#+OPTIONS: num:nil toc:nil reveal_width:1075
+#+OPTIONS: num:nil toc:nil
+#+REVEAL_INIT_OPTIONS: width:1075, navigationMode:"linear"
+#+reveal_width: 1075
 #+REVEAL_TRANS: slide
 #+REVEAL_MARGIN: 0
 # #+REVEAL_EXTERNAL_PLUGINS: (Animate . "./plugins/animate.js")
@@ -21,6 +24,8 @@
 #+REVEAL_TITLE_SLIDE_STATE: title-slide
 
 #+INCLUDE: ./about.html export html
+
+#+INCLUDE: ./qr.html export html
 
 * Мы как разработчики хотим писать...
 :PROPERTIES:
@@ -48,7 +53,6 @@
 :PROPERTIES:
 :REVEAL_EXTRA_ATTR: data-auto-animate
 :END:
-# Dependency Injection (Внедрение зависимостей) is a software design technique in which the creation and binding of dependencies are done outside of the dependent class.
 Dependency Injection (Внедрение зависимостей) - это метод проектирования программного обеспечения, при котором создание и привязка зависимостей выполняются вне зависимого класса.
 
 ** Преимущества DI
@@ -60,10 +64,9 @@ Dependency Injection (Внедрение зависимостей) - это ме
 #+ATTR_REVEAL: :frag appear
 + Тестируемость;
 
-
 * Onion architecture
 :PROPERTIES:
-:REVEAL_EXTRA_ATTR: data-auto-animate
+:REVEAL_EXTRA_ATTR: data-auto-animate data-auto-animate-duration="0" data-auto-animate-unmatched="false"
 :END:
 #+REVEAL_HTML: <span class="first-circle circle"></span>
 #+REVEAL_HTML: <span class="second-circle circle"></span>
@@ -71,7 +74,7 @@ Dependency Injection (Внедрение зависимостей) - это ме
 
 * Onion architecture
 :PROPERTIES:
-:REVEAL_EXTRA_ATTR: data-auto-animate
+:REVEAL_EXTRA_ATTR: data-auto-animate data-auto-animate-duration="0" data-auto-animate-unmatched="false"
 :END:
 #+REVEAL_HTML: <span class="first-circle circle"></span>
 #+REVEAL_HTML: <span class="second-circle circle"></span>
@@ -79,12 +82,11 @@ Dependency Injection (Внедрение зависимостей) - это ме
 
 * Onion architecture
 :PROPERTIES:
-:REVEAL_EXTRA_ATTR: data-auto-animate
+:REVEAL_EXTRA_ATTR: data-auto-animate data-auto-animate-duration="0" data-auto-animate-unmatched="false"
 :END:
 #+REVEAL_HTML: <span class="first-circle circle red-border"></span>
 #+REVEAL_HTML: <span class="second-circle circle"></span>
 #+REVEAL_HTML: <span class="third-circle circle"></span>
-
 
 ** Трех слойный пирог
 | №      | Слой                  |
@@ -98,6 +100,15 @@ Dependency Injection (Внедрение зависимостей) - это ме
 
 * Тестовый проект
 ** Бот переводчик
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+Получает сообщение от пользователя через long polling, переводит с английского на русский, отправляет сообщение обратно пользователю.
+
+** Бот переводчик
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
 Получает сообщение от пользователя через long polling, переводит с английского на русский, отправляет сообщение обратно пользователю.
 
 + Получение новых сообщений;
@@ -138,9 +149,17 @@ proceed = pullUpdates
 
 * Handle / Service pattern
 ** Функциональное программирование
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+** Функциональное программирование
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
 + Функции;
 + Данные;
 ** Основная идея
+#+ATTR_REVEAL: :data_id handle0 :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data Handle = Handle
     { hPool   :: Pool Postgres.Connection
@@ -150,16 +169,30 @@ data Handle = Handle
     }
 #+END_SRC
 ** Handle interface
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id handle0 :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data Handle = Handle
-    { createUser :: Text -> IO User
+    { translate :: Text -> IO (Maybe Text)
     , ...
     }
 #+END_SRC
 
+** Handle interface
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id handle0 :code_attribs data-trim data-line-numbers='1-7|6-7'
 #+BEGIN_SRC haskell
-createUser :: Handle -> Text -> IO User
-createUser = ...
+data Handle = Handle
+    { translate :: Text -> IO (Maybe Text)
+    , ...
+    }
+
+translate :: Handle -> Text -> IO (Maybe Text)
+translate = ...
 #+END_SRC
 
 ** Наш проект
@@ -167,7 +200,8 @@ createUser = ...
 :REVEAL_EXTRA_ATTR: data-auto-animate
 :END:
 
-#+ATTR_REVEAL: :data_id handle :code_attribs data-line-numbers='1-18|1-8'
+#+ATTR_REVEAL: :data_id handle
+#+ATTR_REVEAL: :data_id handle :code_attribs data-line-numbers='1-18|1-8' data-trim
 #+BEGIN_SRC haskell
 pullUpdates :: IO [Message]
 pullUpdates = ...
@@ -194,7 +228,8 @@ proceed = pullUpdates
 :REVEAL_EXTRA_ATTR: data-auto-animate
 :END:
 
-#+ATTR_REVEAL: :data_id handle :code_attribs data-line-numbers
+#+ATTR_REVEAL: :data_id handle
+#+ATTR_REVEAL: :code_attribs data-line-numbers data-trim
 #+BEGIN_SRC haskell
 pullUpdates :: IO [Message]
 pullUpdates = ...
@@ -360,6 +395,31 @@ data Handle m = Handle
 
 #+ATTR_REVEAL: :data_id tf :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
+pullUpdates :: m [Message]
+sendMessage :: Message -> m ()
+translate   :: Text -> m (Maybe Text)
+#+END_SRC
+
+** Основная идея
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id tf :code_attribs data-line-numbers
+#+BEGIN_SRC haskell
+pullUpdates :: m [Message]
+sendMessage :: Message -> m ()
+
+translate   :: Text -> m (Maybe Text)
+#+END_SRC
+
+** Основная идея
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id tf :code_attribs data-line-numbers
+#+BEGIN_SRC haskell
 class Monad m => MonadMessenger m where
   pullUpdates :: m [Message]
   sendMessage :: Message -> m ()
@@ -377,22 +437,6 @@ class Monad m => MonadTranslator m where
 #+ATTR_REVEAL: :data_id tf :code_attribs data-line-numbers='1-6|1-3|5-6'
 #+BEGIN_SRC haskell
 class Monad m => MonadMessenger m where
-  pullUpdates :: m [Message]
-  sendMessage :: Message -> m ()
-
-class Monad m => MonadTranslator m where
-  translate :: Text -> m (Maybe Text)
-#+END_SRC
-
-** Type families
-:PROPERTIES:
-:REVEAL_EXTRA_ATTR: data-auto-animate
-:END:
-
-#+ATTR_REVEAL: :data_id tf :code_attribs data-line-numbers='1-7|2'
-#+BEGIN_SRC haskell
-class Monad m => MonadMessenger m where
-  type Message m :: *
   pullUpdates :: m [Message]
   sendMessage :: Message -> m ()
 
@@ -432,7 +476,7 @@ proceed = pullUpdates
 :REVEAL_EXTRA_ATTR: data-auto-animate
 :END:
 
-#+ATTR_REVEAL: :data_id tf-interpret :code_attribs data-trim
+#+ATTR_REVEAL: :data_id tf-interpret :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 newtype AppM a = AppM { runAppM :: ReaderT SomeContext IO a }
 #+END_SRC
@@ -542,6 +586,23 @@ class MonadDB m => MonadTranslator m
 :REVEAL_EXTRA_ATTR: data-auto-animate
 :END:
 + Нет возможности добавления нового эффекта ниже по стэку:
+#+ATTR_REVEAL: :data_id tf-interpret :code_attribs data-trim data-line-numbers
+#+BEGIN_SRC haskell
+newtype AppM a = AppM { runAppM :: ReaderT SomeContext IO a }
+  deriving newtype (Functor, Applicative, Monad, ...)
+
+instance MonadMessenger AppM where
+  pullUpdates = ...
+  sendMessage = ...
+
+instance MonadTranslator AppM where
+  translate = ...
+#+END_SRC
+** Минусы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
++ Нет возможности добавления нового эффекта ниже по стэку:
 #+ATTR_REVEAL: :data_id tf-interpret :code_attribs data-trim data-line-numbers='1-9|11-16|13'
 #+BEGIN_SRC haskell
 newtype AppM a = AppM { runAppM :: ReaderT SomeContext IO a }
@@ -566,7 +627,30 @@ instance MonadTranslator m => MonadTranslator (ReaderT r m) where
 :REVEAL_EXTRA_ATTR: data-auto-animate
 :END:
 + Нет возможности "реинтрепретации" эффекта:
-#+ATTR_REVEAL: :data_id tf-interpret :code_attribs data-trim data-line-numbers='1-9|11-19'
+** Минусы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
++ Нет возможности "реинтрепретации" эффекта:
+#+ATTR_REVEAL: :data_id tf-reinterpret :code_attribs data-trim data-line-numbers
+#+BEGIN_SRC haskell
+newtype AppM a = AppM { runAppM :: ReaderT SomeContext IO a }
+  deriving newtype (Functor, Applicative, Monad, ...)
+
+instance MonadMessenger AppM where
+  pullUpdates = ...
+  sendMessage = ...
+
+instance MonadTranslator AppM where
+  translate = ...
+#+END_SRC
+
+** Минусы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
++ Нет возможности "реинтрепретации" эффекта:
+#+ATTR_REVEAL: :data_id tf-reinterpret :code_attribs data-trim data-line-numbers='1-9|11-19'
 #+BEGIN_SRC haskell
 newtype AppM a = AppM { runAppM :: ReaderT SomeContext IO a }
   deriving newtype (Functor, Applicative, Monad, ...)
@@ -606,14 +690,11 @@ instance MonadTranslator AppM2 where
 #+ATTR_REVEAL: :frag appear
 + Код;
 #+ATTR_REVEAL: :frag appear
-+ AST (Abtract syntax tree);
++ AST (Abstract syntax tree);
 #+ATTR_REVEAL: :frag appear
 + Интрепретатор;
 
 ** Большая троица
-:PROPERTIES:
-:REVEAL_EXTRA_ATTR: data-auto-animate
-:END:
 
 *Functor*
 #+BEGIN_SRC haskell
@@ -636,12 +717,14 @@ class Applicative m => Monad m where
 #+END_SRC
 
 ** Functor
+#+ATTR_REVEAL: :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 class Functor f where
   fmap :: (a -> b) -> f a -> f b
 #+END_SRC
 
 ** Applicative
+#+ATTR_REVEAL: :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 class Functor f => Applicative f where
   pure :: a -> f a
@@ -649,6 +732,10 @@ class Functor f => Applicative f where
 #+END_SRC
 
 ** Monad
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id monad :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 class Applicative m => Monad m where
   return :: a -> m a
@@ -656,28 +743,46 @@ class Applicative m => Monad m where
 #+END_SRC
 
 ** Monad
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id monad :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 class Applicative m => Monad m where
   return :: a -> m a
   (>>=) :: m a -> (a -> m b) -> m b
-#+END_SRC
 
-#+BEGIN_SRC haskell
-join :: (Monad m) => m (m a) -> m a
+join :: Monad m => m (m a) -> m a
 #+END_SRC
 
 ** Monad
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id monad :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
-join :: (Monad m) => m (m a) -> m a
-fmap :: (a -> b) -> f a -> f b
+fmap :: Functor f => (a -> b) -> f a -> f b
+join :: Monad m => m (m a) -> m a
 #+END_SRC
 
+** Monad
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id monad :code_attribs data-trim data-line-numbers=1-5|4-5
 #+BEGIN_SRC haskell
+fmap :: Functor f => (a -> b) -> f a -> f b
+join :: Monad m => m (m a) -> m a
+
 (>>=) :: m a -> (a -> m b) -> m b
 (>>=) m f = join (fmap f m)
 #+END_SRC
 
 ** Алгебра бизнес логики
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id algebra :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data Bot
   = PullUpdates [Message]
@@ -686,6 +791,11 @@ data Bot
 #+END_SRC
 
 ** Алгебра бизнес логики
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id algebra :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data Bot
   = PullUpdate Message
@@ -693,6 +803,11 @@ data Bot
 #+END_SRC
 
 ** Алгебра бизнес логики
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id algebra :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data Bot next
   = PullUpdate Message next
@@ -700,6 +815,11 @@ data Bot next
 #+END_SRC
 
 ** Алгебра бизнес логики
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id algebra :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data Bot a
   = PullUpdate Message (Bot a)
@@ -707,6 +827,26 @@ data Bot a
 #+END_SRC
 
 ** Алгебра бизнес логики
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id algebra :code_attribs data-trim data-line-numbers
+#+BEGIN_SRC haskell
+data Bot a
+  = PullUpdate Message (Bot a)
+  | SendMessage Message (Bot a)
+#+END_SRC
+
+#+ATTR_HTML: :height 200vh :style margin-left: 50%; transform: translateX(-50%);
+[[./images/dolls.png]]
+
+** Алгебра бизнес логики
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id algebra :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data Bot a
   = PullUpdate (Message -> (Bot a))
@@ -714,6 +854,11 @@ data Bot a
 #+END_SRC
 
 ** Алгебра бизнес логики
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id algebra :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data Bot a
   = PullUpdate (Message -> (Bot a))
@@ -722,6 +867,28 @@ data Bot a
 #+END_SRC
 
 ** Эхо бот
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id algebra :code_attribs data-trim data-line-numbers=1-9|6-9|6|7|8|9
+#+BEGIN_SRC haskell
+data Bot a
+  = PullUpdate (Message -> (Bot a))
+  | SendMessage Message (Bot a)
+  | Done a
+
+echo :: Bot ()
+echo = PullUpdate $ \msg ->
+       SendMessage msg
+     $ Done ()
+#+END_SRC
+** Эхо бот
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id algebra :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data Bot a
   = PullUpdate (Message -> (Bot a))
@@ -734,7 +901,15 @@ echo = PullUpdate $ \msg ->
      $ Done ()
 #+END_SRC
 
+#+ATTR_HTML: :height 200vh :style margin-left: 50%; transform: translateX(-50%);
+[[./images/dolls.png]]
+
 ** Monad instance
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id algebra :code_attribs data-trim data-line-numbers=1-13|6-8|10-13|11|12|13
 #+BEGIN_SRC haskell
 data Bot a
   = SendMessage Message (Bot a)
@@ -752,6 +927,10 @@ instance Monad Bot where
 #+END_SRC
 
 ** Эхо бот
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id algebra :code_attribs data-trim data-line-numbers=1-9|6-9
 #+BEGIN_SRC haskell
 data Bot a
   = PullUpdate (Message -> (Bot a))
@@ -765,6 +944,10 @@ echo = do
 #+END_SRC
 
 ** Интерпретация
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id algebra :code_attribs data-trim data-line-numbers=1-13|1-4|6-13|6|7|8-10|11-13
 #+BEGIN_SRC haskell
 data Bot a
   = Done a
@@ -772,19 +955,20 @@ data Bot a
   | PullUpdate (Message -> (Bot a))
 
 interpretBotIO :: Bot a -> IO a
-
 interpretBotIO (Done a) = pure a
-
 interpretBotIO (SendMessage msg m) = do
   sendMessageIO msg
   interpretBotIO m
-
 interpretBotIO (PullUpdate f) = do
   msg <- pullMessageIO
   interpretBotIO $ f msg
 #+END_SRC
 
 ** Абстрагирование
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id algebra :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data Bot a
   = SendMessage Message (Bot a)
@@ -793,6 +977,10 @@ data Bot a
 #+END_SRC
 
 ** Абстрагирование
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id algebra :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data Bot a
   = SendMessage Message (Bot a)
@@ -802,6 +990,10 @@ data Bot a
 #+END_SRC
 
 ** Абстрагирование
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id algebra :code_attribs data-trim data-line-numbers=1-10|1-8|10
 #+BEGIN_SRC haskell
 data BotF next
   = SendMessage Message next
@@ -816,6 +1008,10 @@ type Bot a = Free BotF a
 #+END_SRC
 
 ** Основная идея
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id free :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data Free f a
   = Pure a
@@ -823,6 +1019,10 @@ data Free f a
 #+END_SRC
 
 ** Основная идея
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id free :code_attribs data-trim data-line-numbers=1-3|5,8|6,9
 #+BEGIN_SRC haskell
 data Free f a
   = Pure a
@@ -836,6 +1036,10 @@ join :: Monad m => m (m a) -> m a
 #+END_SRC
 
 ** Functor instance
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id free :code_attribs data-trim data-line-numbers=1-7|5-7
 #+BEGIN_SRC haskell
 data Free f a
   = Pure a
@@ -847,6 +1051,10 @@ instance Functor f => Functor (Free f) where
 #+END_SRC
 
 ** Monad instance
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id free :code_attribs data-trim data-line-numbers=1-8|5-8
 #+BEGIN_SRC haskell
 data Free f a
   = Pure a
@@ -859,6 +1067,11 @@ instance Functor f => Monad (Free f) where
 #+END_SRC
 
 ** Алгебра бизнес логики
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id free :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data BotF a
   = PullUpdates ([Message] -> a)
@@ -870,12 +1083,20 @@ type Bot = Free BotF
 #+END_SRC
 
 ** Lift functor
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id free :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 liftF :: Functor f => f a -> Free f a
 liftF command = Free (fmap Pure command)
 #+END_SRC
 
 ** Хелперы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id free :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data BotF a
   = PullUpdates ([Message] -> a)
@@ -906,6 +1127,10 @@ proceed = pullUpdates
 #+END_SRC
 
 ** Интерпретация
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id free :code_attribs data-trim data-line-numbers=1-14|6-9|11-14
 #+BEGIN_SRC haskell
 data BotF a
   = PullUpdates ([Message] -> a)
@@ -924,6 +1149,47 @@ interpretBotIO = ???
 #+END_SRC
 
 ** Хелперы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+
+#+ATTR_REVEAL: :data_id free-helpers :code_attribs data-trim data-line-numbers=1-7|2-3|4|5|6|7
+#+BEGIN_SRC haskell
+freeM
+  :: (Functor f, Functor g)
+  => (f a -> g a)
+  -> Free f a
+  -> Free g a
+freeM phi (Pure x)    = Pure x
+freeM phi (Impure fx) = Impure $ phi (freeM phi <$> fx)
+#+END_SRC
+
+** Хелперы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id free-helpers :code_attribs data-trim data-line-numbers=9-13|9
+#+BEGIN_SRC haskell
+freeM
+  :: (Functor f, Functor g)
+  => (f a -> g a)
+  -> Free f a
+  -> Free g a
+freeM phi (Pure x)    = Pure x
+freeM phi (Impure fx) = Impure $ phi (freeM phi <$> fx)
+
+monad :: Monad m => Free m a -> m a
+monad (Pure x) = pure x
+monad (Free mfx) = do
+  fx <- mfx
+  monad fx
+#+END_SRC
+
+** Хелперы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id free-helpers :code_attribs data-trim data-line-numbers=1-20|15-20
 #+BEGIN_SRC haskell
 freeM
   :: (Functor f, Functor g)
@@ -948,6 +1214,10 @@ interpret phi = monad . freeM phi
 #+END_SRC
 
 ** Интерпретация
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id free-helpers :code_attribs data-trim data-line-numbers=1-10|1|3-7|9-10
 #+BEGIN_SRC haskell
 botIO :: BotF a -> IO a
 
@@ -962,6 +1232,10 @@ interpetBotIO = interpret botIO
 #+END_SRC
 
 ** Композиция алгебр
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id free-comp :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data BotF a
   = PullUpdates ([Message] -> a)
@@ -972,16 +1246,10 @@ type Bot = Free BotF
 #+END_SRC
 
 ** Композиция алгебр
-#+BEGIN_SRC haskell
-data MessengerF a
-  = PullUpdates ([Message] -> a)
-  | SendMessage Message a
-
-data TranslatorF a
-  = Translate Text ((Maybe Text) -> a)
-#+END_SRC
-
-** Композиция алгебр
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id free-comp :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data MessengerF a
   = PullUpdates ([Message] -> a)
@@ -992,6 +1260,10 @@ data TranslatorF a
 #+END_SRC
 
 ** Тип суммы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id free-comp :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data Sum f g a
   = L (f a)
@@ -1001,6 +1273,10 @@ instance (Functor f, Functor g) => Functor (Sum f g)
 #+END_SRC
 
 ** Композиция алгебр
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id free-comp :code_attribs data-trim data-line-numbers=1-10|10
 #+BEGIN_SRC haskell
 data MessengerF a
   = PullUpdates ([Message] -> a)
@@ -1015,6 +1291,7 @@ type BotF = Sum MessengerF TranslatorF
 #+END_SRC
 
 ** Хелперы
+#+ATTR_REVEAL: :data_id free-comp :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 pullUpdates :: Bot [Message]
 pullUpdates = liftF $ PullUpdates id
@@ -1027,6 +1304,10 @@ translate t = liftF $ Translate t id
 #+END_SRC
 
 ** Хелперы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id free-comp :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 pullUpdates :: Bot [Message]
 pullUpdates = liftF $ L $ PullUpdates id
@@ -1039,6 +1320,7 @@ translate t = liftF $ R $ Translate t id
 #+END_SRC
 
 ** Тип суммы
+#+ATTR_REVEAL: :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data Sum f g a
   = L (f a)
@@ -1046,20 +1328,35 @@ data Sum f g a
 #+END_SRC
 
 ** Варианты расширения
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+** Варианты расширения
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
 + Постороение дерева (Hierarchical Free Monads);
 + Расширяемый спиcок эффектов (Extensible effects);
 
 ** Hierarchical Free Monads
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id hfm :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data MessengerF next
   = PullUpdates ([Message] -> next)
   | SendMessage Message next
 
-data TranslatorF a
+data TranslatorF next
   = Translate Text ((Maybe Text) -> next)
 #+END_SRC
 
 ** Hierarchical Free Monads
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id hfm :code_attribs data-trim data-line-numbers=1-10|8-10
 #+BEGIN_SRC haskell
 data MessengerF next
   = PullUpdates ([Message] -> next)
@@ -1074,6 +1371,10 @@ data BotF a
 #+END_SRC
 
 ** Hierarchical Free Monads
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id hfm :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data BotF a
   = EvalMessenger  (MessengerF a)
@@ -1082,6 +1383,10 @@ data BotF a
 #+END_SRC
 
 ** Hierarchical Free Monads
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id hfm :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 data BotF a
   = EvalMessenger  (MessengerF a)
@@ -1098,11 +1403,25 @@ botIO (EvalLogger m)     = evalLoggerIO m
 ** Плюсы & Минусы
 
 ** Плюсы:
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+** Плюсы:
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
 + Высокая выразительность;
 + Чистота бизнес логики;
 + Жеское разделение слоев (при HFM);
 
 ** Минусы:
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+** Минусы:
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
 + Производительность (при initial кодировке);
 + Boilerplate;
 + Эффекты высшего порядка;
@@ -1110,6 +1429,10 @@ botIO (EvalLogger m)     = evalLoggerIO m
 ** Эффекты высшего порядка
 
 ** Функции высшего порядка
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 map :: (a -> b) -> [a] -> [b]
 
@@ -1117,6 +1440,10 @@ filter :: (a -> Bool) -> [a] -> [a]
 #+END_SRC
 
 ** Эффекты высшего порядка
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id hfm :code_attribs data-trim data-line-numbers=1-3|3
 #+BEGIN_SRC haskell
 class MonadReader r m | m -> r where
   ask   :: m r
@@ -1124,6 +1451,10 @@ class MonadReader r m | m -> r where
 #+END_SRC
 
 ** Эффекты высшего порядка
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id hfm :code_attribs data-trim data-line-numbers=1-3|3
 #+BEGIN_SRC haskell
 class MonadError e m | m -> e where
   throwError :: e -> m a
@@ -1207,7 +1538,10 @@ data Free f a where
 #+END_SRC
 
 ** Простой трюк
-#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=1-2|4-5|7-8
 #+BEGIN_SRC haskell
 data Lan g a where
   Lan :: g x -> (x -> a) -> Lan g a
@@ -1220,7 +1554,10 @@ lan ga = Lan ga id
 #+END_SRC
 
 ** Простой трюк
-#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=1-5|2,5
 #+BEGIN_SRC haskell
 data Lan g b where
   Lan :: (a -> b) -> g a -> Lan g b
@@ -1230,6 +1567,9 @@ class Functor f where
 #+END_SRC
 
 ** Простой трюк
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
 #+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers data-trim data-line-numbers='1-14|1-5|8-14'
 #+BEGIN_SRC haskell
 data Lan g b where
@@ -1249,19 +1589,27 @@ class Monad m where
 #+END_SRC
 
 ** Простой трюк
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
 #+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
-FFree g = Free (Lan f)
+data FFree g a where
+  FPure   :: a -> FFree g a
+  FImpure :: g x -> (x -> FFree g a) -> FFree g a
+
+class Monad m where
+  pure  :: a -> m a
+  (>>=) :: m a -> (a -> m b) -> m b
 #+END_SRC
 
-#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
+** Простой трюк
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=1-9|1
 #+BEGIN_SRC haskell
-data Lan g b where
-  Lan :: (a -> b) -> g a -> Lan g b
-
-class Functor f where
-  fmap :: (a -> b) -> f a -> f b
-
+FFree g = Free (Lan g)
 
 data FFree g a where
   FPure   :: a -> FFree g a
@@ -1285,6 +1633,9 @@ type BotM = FFree Bot
 #+END_SRC
 
 ** Lift helper
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
 #+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 lan :: g a -> Lan g a
@@ -1295,6 +1646,10 @@ send fa = FImpure fa FPure
 #+END_SRC
 
 ** Хелперы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=1-18|11-18
 #+BEGIN_SRC haskell
 data Bot a where
   PullUpdates :: Bot [Message]
@@ -1317,6 +1672,7 @@ translate :: send . Translate
 #+END_SRC
 
 ** Бизнес логика
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 proceed :: Bot ()
 proceed = pullUpdates
@@ -1330,6 +1686,7 @@ proceed = pullUpdates
 #+END_SRC
 
 ** Интерпретация
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 data Bot a where
   PullUpdates :: Bot [Message]
@@ -1343,6 +1700,7 @@ botIO (Translate t)     = ...
 #+END_SRC
 
 ** Интерпретация
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 data FFree g a where
   FPure   :: a -> FFree g a
@@ -1360,6 +1718,7 @@ runFree phi m = loop m
 #+END_SRC
 
 ** Интерпретация
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 runFree
   :: Monad m
@@ -1373,12 +1732,23 @@ interpretBotIO :: FFree Bot a -> IO a
 interpretBotIO = runFree botIO
 #+END_SRC
 
-** Плюсы
 ** Плюсы:
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+** Плюсы:
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
 + Производительность;
 + Лаконичность;
 
 ** Лаконичность
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+*Free*
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 data BotF a
   = PullUpdates ([Message] -> a)
@@ -1386,6 +1756,21 @@ data BotF a
   | Translate Text ((Maybe Text) -> a)
 #+END_SRC
 
+** Лаконичность
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+*Free*
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
+#+BEGIN_SRC haskell
+data BotF a
+  = PullUpdates ([Message] -> a)
+  | SendMessage Message a
+  | Translate Text ((Maybe Text) -> a)
+#+END_SRC
+
+*Freer*
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 data Bot a where
   PullUpdates :: Bot [Message]
@@ -1394,6 +1779,11 @@ data Bot a where
 #+END_SRC
 
 ** Лаконичность
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+*Free*
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 pullUpdates :: Bot [Message]
 pullUpdates = liftF $ PullUpdates id
@@ -1405,6 +1795,24 @@ translate :: Text -> Bot (Maybe Text)
 translate t = liftF $ Translate t id
 #+END_SRC
 
+** Лаконичность
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+*Free*
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
+#+BEGIN_SRC haskell
+pullUpdates :: Bot [Message]
+pullUpdates = liftF $ PullUpdates id
+
+sendMessage :: Message -> Bot ()
+sendMessage msg = liftF $ SendMessage msg ()
+
+translate :: Text -> Bot (Maybe Text)
+translate t = liftF $ Translate t id
+#+END_SRC
+
+*Freer*
 #+BEGIN_SRC haskell
 pullUpdates :: BotM [Message]
 pullUpdates = send PullUpdates
@@ -1418,6 +1826,10 @@ translate :: send . Translate
 
 * Effects systems
 ** Freer monad
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 data FFree g a where
   FPure   :: a -> FFree g a
@@ -1425,6 +1837,10 @@ data FFree g a where
 #+END_SRC
 
 ** Алгебра бизнес логики
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 data Bot a where
   PullUpdates :: Bot [Message]
@@ -1433,6 +1849,10 @@ data Bot a where
 #+END_SRC
 
 ** Алгебра бизнес логики
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 data Messenger a where
   PullUpdates :: Messenger [Message]
@@ -1443,6 +1863,7 @@ data Translator a where
 #+END_SRC
 
 ** Тип суммы
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 data Sum f g a
   = L (f a)
@@ -1454,11 +1875,19 @@ data Sum f g a
 + Расширяемый спиcок эффектов (Extensible effects);
 
 ** Union type
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 data Union (sig :: [Type -> Type]) r
 #+END_SRC
 
 ** Union type
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 data Union (sig :: [Type -> Type]) r
 
@@ -1466,6 +1895,10 @@ Union '[Messenger, Translator]
 #+END_SRC
 
 ** Member class
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=1-7|3-5|7
 #+BEGIN_SRC haskell
 data Union (sig :: [Type -> Type]) r
 
@@ -1477,6 +1910,10 @@ decomp :: Union (f ': r) a -> Either (Union r a) (f a)
 #+END_SRC
 
 ** Freer monad
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 data FFree f a where
   FPure   :: a -> FFree f a
@@ -1484,6 +1921,10 @@ data FFree f a where
 #+END_SRC
 
 ** Freer monad
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=1-8|5-8
 #+BEGIN_SRC haskell
 data FFree f a where
   FPure   :: a -> FFree f a
@@ -1496,6 +1937,10 @@ data FEFree r a where
 #+END_SRC
 
 ** Lift helper
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=1-12|7-12|11-12
 #+BEGIN_SRC haskell
 data Union (sig :: [Type -> Type]) r
 
@@ -1512,6 +1957,10 @@ send fa = Impure (inj fa) Pure
 #+END_SRC
 
 ** Хeлперы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 send :: Member f r => f a -> Eff r a
 send fa = Impure (inj fa) Pure
@@ -1535,6 +1984,7 @@ translate = send . Translate
 #+END_SRC
 
 ** Бизнес логика
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 proceed :: (Member Messenger r, Member Translator r) => Eff r ()
 proceed = pullUpdates
@@ -1548,15 +1998,23 @@ proceed = pullUpdates
 #+END_SRC
 
 ** Сравнение с TF
+*Effect system*
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 proceed :: (Member Messenger r, Member Translator r) => Eff r ()
 #+END_SRC
 
+*Tagless final*
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers
 #+BEGIN_SRC haskell
 proceed :: (MonadMessenger m, MonadTranslator m) => m ()
 #+END_SRC
 
 ** Бизнес логика
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=1-9|2-3
 #+BEGIN_SRC haskell
 proceed :: (Member Messenger r, Member Translator r) => Eff r ()
 proceed = pullUpdates
@@ -1570,6 +2028,10 @@ proceed = pullUpdates
 #+END_SRC
 
 ** Бизнес логика
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=2-4
 #+BEGIN_SRC haskell
 proceed :: (Member Messenger r, Member Translator r) => Eff r ()
 proceed = do
@@ -1584,6 +2046,10 @@ proceed = do
 #+END_SRC
 
 ** Бизнес логика
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=2-5
 #+BEGIN_SRC haskell
 proceed :: (Member Messenger r, Member Translator r) => Eff r ()
 proceed = do
@@ -1602,6 +2068,10 @@ proceed = do
 #+END_SRC
 
 ** Бизнес логика
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=2-6
 #+BEGIN_SRC haskell
 proceed :: (Member Messenger r, Member Translator r) => Eff r ()
 proceed = do
@@ -1622,6 +2092,7 @@ proceed = do
 #+END_SRC
 
 ** Интерпретация
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=2-6
 #+BEGIN_SRC haskell
 decomp :: Union (f ': r) a -> Either (Union r a) (f a)
 
@@ -1636,6 +2107,7 @@ interpret phi (Impure u f) = case decomp u of
 #+END_SRC
 
 ** Интерпретация
+#+ATTR_REVEAL: :data_id freer :code_attribs data-line-numbers=2-6
 #+BEGIN_SRC haskell
 reinterpret
   :: (f a -> Eff (g ': effs))
@@ -1655,7 +2127,13 @@ run :: Eff '[] a -> a
 
 ** Плюсы & минусы
 ** Плюсы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
 ** Плюсы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
 + Высокая выразительноть:
   + Реинтерпретация эффектов;
   + Добавление эффектов на лету;
@@ -1663,7 +2141,13 @@ run :: Eff '[] a -> a
   + Поддержка эффектов высшего порядка;
 + Производительность;
 ** Минусы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
 ** Минусы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
 + Производительность;
 + Высокий порог входа;
 
