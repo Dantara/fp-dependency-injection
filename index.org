@@ -470,6 +470,9 @@ proceed = pullUpdates
 #+END_SRC
 
 ** Интерпретация
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
 
 ** Интерпретация
 :PROPERTIES:
@@ -575,6 +578,17 @@ class MonadTranslator m
 #+ATTR_REVEAL: :data_id tf-interpret :code_attribs data-trim
 #+BEGIN_SRC haskell
 class MonadDB m => MonadTranslator m
+#+END_SRC
+** Минусы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
++ Часть абстракций протекаeт:
+#+ATTR_REVEAL: :data_id tf-interpret :code_attribs data-trim
+#+BEGIN_SRC haskell
+class MonadTranslator m
+
+instance MonadDB m => MonadTranslator m
 #+END_SRC
 ** Минусы
 :PROPERTIES:
@@ -1291,6 +1305,9 @@ type BotF = Sum MessengerF TranslatorF
 #+END_SRC
 
 ** Хелперы
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: data-auto-animate
+:END:
 #+ATTR_REVEAL: :data_id free-comp :code_attribs data-trim data-line-numbers
 #+BEGIN_SRC haskell
 pullUpdates :: Bot [Message]
